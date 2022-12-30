@@ -4,8 +4,8 @@
   "description": "A Web App",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "devstart": "nodemon app.js",
+    "start": "node src/app.js",
+    "devstart": "nodemon src/app.js",
     "test": "jest --detectOpenHandles --forceExit"
   },
   "author": "Chen Ben Tolila",
