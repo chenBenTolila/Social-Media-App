@@ -1,18 +1,37 @@
 ###
+ 
+ GET http://localhost:3000/public/index.html
+
+###
 
 GET http://localhost:3000/post
+Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYjJlZDI5NDc2NzI1ZjQwYjQyM2EzMSIsImlhdCI6MTY3MjY3MDUwOCwiZXhwIjoxNjcyNjc0MTA4fQ.i31SrhcBE4Bwq4U_3BpEh3UtGXtShTZrPKJgkMhNRGM
 
 ###
 
 GET http://localhost:3000/post?sender=123456
+Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYjJlZDI5NDc2NzI1ZjQwYjQyM2EzMSIsImlhdCI6MTY3MjY3MDUwOCwiZXhwIjoxNjcyNjc0MTA4fQ.i31SrhcBE4Bwq4U_3BpEh3UtGXtShTZrPKJgkMhNRGM
 
 ###
 
-GET http://localhost:3000/post/637b0e4e1a66b14db87e761d
+GET http://localhost:3000/post/63b2ede5d424f79aa3a65d7d
+Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYjJlZDI5NDc2NzI1ZjQwYjQyM2EzMSIsImlhdCI6MTY3MjY3MDUwOCwiZXhwIjoxNjcyNjc0MTA4fQ.i31SrhcBE4Bwq4U_3BpEh3UtGXtShTZrPKJgkMhNRGM
 
 ###
 
-GET http://localhost:3000/post/637b0e4e1a66b14db87e761
+GET http://localhost:3000/post/63b2ede5d424f79aa3a65d7f1
+Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYjJlZDI5NDc2NzI1ZjQwYjQyM2EzMSIsImlhdCI6MTY3MjY3MDUwOCwiZXhwIjoxNjcyNjc0MTA4fQ.i31SrhcBE4Bwq4U_3BpEh3UtGXtShTZrPKJgkMhNRGM
+
+###
+
+POST http://localhost:3000/post
+Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYjJlZDI5NDc2NzI1ZjQwYjQyM2EzMSIsImlhdCI6MTY3MjY3MDUwOCwiZXhwIjoxNjcyNjc0MTA4fQ.i31SrhcBE4Bwq4U_3BpEh3UtGXtShTZrPKJgkMhNRGM
+Content-Type: application/json
+
+{
+    "message": "this is my new message",
+    "sender": "123456"
+}
 
 ###
 
@@ -27,9 +46,31 @@ Content-Type: application/json
 ###
 
 GET http://localhost:3000/message
+Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYjJlZDI5NDc2NzI1ZjQwYjQyM2EzMSIsImlhdCI6MTY3MjY3MDUwOCwiZXhwIjoxNjcyNjc0MTA4fQ.i31SrhcBE4Bwq4U_3BpEh3UtGXtShTZrPKJgkMhNRGM
 
 ###
 
 POST http://localhost:3000/message
+Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYjJlZDI5NDc2NzI1ZjQwYjQyM2EzMSIsImlhdCI6MTY3MjY3MDUwOCwiZXhwIjoxNjcyNjc0MTA4fQ.i31SrhcBE4Bwq4U_3BpEh3UtGXtShTZrPKJgkMhNRGM
+
+###
+
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "email": "user1@gmail.com",
+    "password": "12345"
+}
+
+###
+
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "user1@gmail.com",
+    "password": "12345"
+}
 
 ###

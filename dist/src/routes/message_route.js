@@ -4,8 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
-const message_1 = __importDefault(require("../controllers/message"));
-router.get('/', message_1.default.getAllmessages);
-router.post('/', message_1.default.addNewMessage);
+const message_js_1 = __importDefault(require("../controllers/message.js"));
+const auth_js_1 = __importDefault(require("../controllers/auth.js"));
+router.get('/', auth_js_1.default.authenticateMiddleware, message_js_1.default.getAllmessages);
+router.post('/', auth_js_1.default.authenticateMiddleware, message_js_1.default.addNewMessage);
 module.exports = router;
 //# sourceMappingURL=message_route.js.map

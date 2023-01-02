@@ -7,14 +7,17 @@
     "test": "tsc && jest --detectOpenHandles --forceExit ./dist/src/tests",
     "start": "tsc && node dist/src/app.js",
     "lint": "eslint . --ext .ts",
-    "devstart": "nodemon ./src/app.ts"
+    "devstart": "nodemon ./src/app.ts",
+    "testAuth": "tsc && jest --detectOpenHandles --forceExit ./dist/src/tests/auth.test.js"
   },
   "author": "Chen Ben Tolila",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.7.2"
   },
   "devDependencies": {

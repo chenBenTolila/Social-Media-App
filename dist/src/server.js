@@ -15,9 +15,11 @@ const db = mongoose_1.default.connection;
 db.on('error', error => { console.error(error); });
 db.once('open', () => { console.log('connected to mongo DB'); });
 app.use('/public', express_1.default.static('public'));
-const post_route_1 = __importDefault(require("./routes/post_route"));
-const message_route_1 = __importDefault(require("./routes/message_route"));
-app.use('/post', post_route_1.default);
-app.use('/message', message_route_1.default);
+const auth_route_js_1 = __importDefault(require("./routes/auth_route.js"));
+app.use('/auth', auth_route_js_1.default);
+const post_route_js_1 = __importDefault(require("./routes/post_route.js"));
+app.use('/post', post_route_js_1.default);
+const message_route_js_1 = __importDefault(require("./routes/message_route.js"));
+app.use('/message', message_route_js_1.default);
 module.exports = app;
 //# sourceMappingURL=server.js.map
