@@ -7,6 +7,7 @@ const router = express_1.default.Router();
 const auth_js_1 = __importDefault(require("../controllers/auth.js"));
 router.post('/register', auth_js_1.default.register);
 router.post('/login', auth_js_1.default.login);
-router.post('/logout', auth_js_1.default.logout);
+router.get('/logout', auth_js_1.default.logout);
+router.get('/refresh', auth_js_1.default.refresh);
 module.exports = router;
 //# sourceMappingURL=auth_route.js.map

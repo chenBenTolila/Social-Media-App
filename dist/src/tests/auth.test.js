@@ -20,6 +20,7 @@ const user_model_1 = __importDefault(require("../models/user_model"));
 const userEmail = "user1@gmail.com";
 const userPassword = "12345";
 let accessToken = '';
+let refreshToken = '';
 beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
     yield post_model_1.default.remove();
     yield user_model_1.default.remove();
@@ -30,25 +31,16 @@ afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
     mongoose_1.default.connection.close();
 }));
 describe("Auth Tests", () => {
+    test("Not authorized attempt test", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, supertest_1.default)(server_1.default).get('/post');
+        expect(response.statusCode).not.toEqual(200);
+    }));
     test("Register test", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).post('/auth/register').send({
             "email": userEmail,
             "password": userPassword
         });
         expect(response.statusCode).toEqual(200);
-    }));
-    test("Login test", () => __awaiter(void 0, void 0, void 0, function* () {
-        let response = yield (0, supertest_1.default)(server_1.default).post('/auth/login').send({
-            "email": userEmail,
-            "password": userPassword
-        });
-        expect(response.statusCode).toEqual(200);
-        accessToken = response.body.accesstoken;
-        expect(accessToken).not.toBeNull();
-        response = yield (0, supertest_1.default)(server_1.default).get('/post').set('Authorization', 'JWT ' + accessToken);
-        expect(response.statusCode).toEqual(200);
-        response = yield (0, supertest_1.default)(server_1.default).get('/post').set('Authorization', 'JWT 1' + accessToken);
-        expect(response.statusCode).not.toEqual(200);
     }));
     test("Login test wrong password", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).post('/auth/login').send({
@@ -59,12 +51,49 @@ describe("Auth Tests", () => {
         const access = response.body.accesstoken;
         expect(access).toBeUndefined();
     }));
-    test("Logout test", () => __awaiter(void 0, void 0, void 0, function* () {
-        const response = yield (0, supertest_1.default)(server_1.default).post('/auth/logout').send({
+    test("Login test", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, supertest_1.default)(server_1.default).post('/auth/login').send({
             "email": userEmail,
             "password": userPassword
         });
         expect(response.statusCode).toEqual(200);
+        accessToken = response.body.accesstoken;
+        expect(accessToken).not.toBeNull();
+        refreshToken = response.body.refreshToken;
+        expect(accessToken).not.toBeNull();
+    }));
+    test("Test using valid access token", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, supertest_1.default)(server_1.default).get('/post').set('Authorization', 'JWT ' + accessToken);
+        expect(response.statusCode).toEqual(200);
+    }));
+    test("Test using wrong access token", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, supertest_1.default)(server_1.default).get('/post').set('Authorization', 'JWT 1' + accessToken);
+        expect(response.statusCode).not.toEqual(200);
+    }));
+    jest.setTimeout(30000);
+    test("Test expired token", () => __awaiter(void 0, void 0, void 0, function* () {
+        yield new Promise(r => setTimeout(r, 10000));
+        const response = yield (0, supertest_1.default)(server_1.default).get('/post').set('Authorization', 'JWT ' + accessToken);
+        expect(response.statusCode).not.toEqual(200);
+    }));
+    test("Test refresh token", () => __awaiter(void 0, void 0, void 0, function* () {
+        let response = yield (0, supertest_1.default)(server_1.default).get('/auth/refresh').set('Authorization', 'JWT ' + refreshToken);
+        expect(response.statusCode).toEqual(200);
+        const newAccessToken = response.body.accesstoken;
+        expect(newAccessToken).not.toBeNull();
+        const newRefreshToken = response.body.newRefreshToken;
+        // need to check why it works both ways
+        // const newRefreshToken = response.body.refreshToken
+        expect(newRefreshToken).not.toBeNull();
+        response = yield (0, supertest_1.default)(server_1.default).get('/post').set('Authorization', 'JWT ' + newAccessToken);
+        expect(response.statusCode).toEqual(200);
+    }));
+    test("Logout test", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, supertest_1.default)(server_1.default).get('/auth/logout').set('Authorization', 'JWT ' + refreshToken);
+        expect(response.statusCode).toEqual(200);
     }));
 });
+// TODO:
+// need to add more tests - like test that tries using the old refresh token.
+// and test that tries to use the new refresh token afterwards
 //# sourceMappingURL=auth.test.js.map
