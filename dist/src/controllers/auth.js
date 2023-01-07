@@ -31,7 +31,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield user_model_1.default.findOne({ 'email': email });
         if (user != null) {
-            sendError(res, "user already registered, try a different name");
+            return sendError(res, "user already registered, try a different name");
         }
     }
     catch (err) {
@@ -53,6 +53,13 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         sendError(res, 'fail ...');
     }
 });
+function generateTokens(userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const accessToken = yield jsonwebtoken_1.default.sign({ 'id': userId }, process.env.ACCESS_TOKEN_SECRET, { 'expiresIn': process.env.JWT_TOKEN_EXPIRATION });
+        const refreshToken = yield jsonwebtoken_1.default.sign({ 'id': userId }, process.env.REFRESH_TOKEN_SECRET);
+        return { 'accessToken': accessToken, 'refreshToken': refreshToken };
+    });
+}
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('login');
     const email = req.body.email;
@@ -67,18 +74,14 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const match = yield bcrypt_1.default.compare(password, user.password);
         if (!match)
             return sendError(res, "incorrect user or password");
-        const accessToken = yield jsonwebtoken_1.default.sign({ 'id': user._id }, process.env.ACCESS_TOKEN_SECRET, { 'expiresIn': process.env.JWT_TOKEN_EXPIRATION });
-        const refreshToken = yield jsonwebtoken_1.default.sign({ 'id': user._id }, process.env.REFRESH_TOKEN_SECRET);
+        const tokens = yield generateTokens(user._id.toString());
         if (user.refresh_tokens == null)
-            user.refresh_tokens = [refreshToken];
+            user.refresh_tokens = [tokens.refreshToken];
         else
-            user.refresh_tokens.push(refreshToken);
+            user.refresh_tokens.push(tokens.refreshToken);
         yield user.save();
         // check if the return is really needed
-        return res.status(200).send({
-            'accesstoken': accessToken,
-            'refreshToken': refreshToken
-        });
+        return res.status(200).send(tokens);
     }
     catch (err) {
         console.log("error: " + err);
@@ -106,16 +109,12 @@ const refresh = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             yield userObj.save();
             return sendError(res, 'failed validating token');
         }
-        const newAccessToken = yield jsonwebtoken_1.default.sign({ 'id': user._id }, process.env.ACCESS_TOKEN_SECRET, { 'expiresIn': process.env.JWT_TOKEN_EXPIRATION });
-        const newRefreshToken = yield jsonwebtoken_1.default.sign({ 'id': user._id }, process.env.REFRESH_TOKEN_SECRET);
+        const tokens = yield generateTokens(userObj._id.toString());
         // TODO:
         // missing assignment in this statement 
-        userObj.refresh_tokens[userObj.refresh_tokens.indexOf(refreshToken)];
+        userObj.refresh_tokens[userObj.refresh_tokens.indexOf(refreshToken)] = tokens.refreshToken;
         yield userObj.save();
-        return res.status(200).send({
-            'accesstoken': newAccessToken,
-            'refreshToken': newRefreshToken
-        });
+        return res.status(200).send(tokens);
     }
     catch (err) {
         return sendError(res, 'failed validating token');

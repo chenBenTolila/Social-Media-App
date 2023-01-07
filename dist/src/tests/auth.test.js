@@ -57,7 +57,7 @@ describe("Auth Tests", () => {
             "password": userPassword
         });
         expect(response.statusCode).toEqual(200);
-        accessToken = response.body.accesstoken;
+        accessToken = response.body.accessToken;
         expect(accessToken).not.toBeNull();
         refreshToken = response.body.refreshToken;
         expect(accessToken).not.toBeNull();
@@ -79,13 +79,11 @@ describe("Auth Tests", () => {
     test("Test refresh token", () => __awaiter(void 0, void 0, void 0, function* () {
         let response = yield (0, supertest_1.default)(server_1.default).get('/auth/refresh').set('Authorization', 'JWT ' + refreshToken);
         expect(response.statusCode).toEqual(200);
-        const newAccessToken = response.body.accesstoken;
-        expect(newAccessToken).not.toBeNull();
-        const newRefreshToken = response.body.newRefreshToken;
-        // need to check why it works both ways
-        // const newRefreshToken = response.body.refreshToken
-        expect(newRefreshToken).not.toBeNull();
-        response = yield (0, supertest_1.default)(server_1.default).get('/post').set('Authorization', 'JWT ' + newAccessToken);
+        accessToken = response.body.accessToken;
+        expect(accessToken).not.toBeNull();
+        refreshToken = response.body.refreshToken;
+        expect(refreshToken).not.toBeNull();
+        response = yield (0, supertest_1.default)(server_1.default).get('/post').set('Authorization', 'JWT ' + accessToken);
         expect(response.statusCode).toEqual(200);
     }));
     test("Logout test", () => __awaiter(void 0, void 0, void 0, function* () {

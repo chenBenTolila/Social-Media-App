@@ -52,7 +52,7 @@ describe("Auth Tests", ()=>{
             "password": userPassword
         })
         expect(response.statusCode).toEqual(200)
-        accessToken = response.body.accesstoken
+        accessToken = response.body.accessToken
         expect(accessToken).not.toBeNull()
         refreshToken = response.body.refreshToken
         expect(accessToken).not.toBeNull()
@@ -79,14 +79,12 @@ describe("Auth Tests", ()=>{
         let response = await request(app).get('/auth/refresh').set('Authorization', 'JWT ' + refreshToken)
         expect(response.statusCode).toEqual(200)
 
-        const newAccessToken = response.body.accesstoken
-        expect(newAccessToken).not.toBeNull()
-        const newRefreshToken = response.body.newRefreshToken
-        // need to check why it works both ways
-        // const newRefreshToken = response.body.refreshToken
-        expect(newRefreshToken).not.toBeNull()
+        accessToken = response.body.accessToken
+        expect(accessToken).not.toBeNull()
+        refreshToken = response.body.refreshToken
+        expect(refreshToken).not.toBeNull()
 
-        response = await request(app).get('/post').set('Authorization', 'JWT ' + newAccessToken)
+        response = await request(app).get('/post').set('Authorization', 'JWT ' + accessToken)
         expect(response.statusCode).toEqual(200)
     })
 

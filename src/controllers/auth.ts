@@ -25,7 +25,7 @@ const register = async (req:Request, res:Response)=>{
     try {
         const user = await User.findOne({'email': email})
         if(user != null) {
-            sendError(res, "user already registered, try a different name")
+            return sendError(res, "user already registered, try a different name")
         }
     }catch (err){
         console.log("error: " + err)
@@ -48,6 +48,20 @@ const register = async (req:Request, res:Response)=>{
     }
 }
 
+async function generateTokens(userId:string){
+    const accessToken = await jwt.sign(
+        {'id': userId},
+        process.env.ACCESS_TOKEN_SECRET,
+        {'expiresIn':process.env.JWT_TOKEN_EXPIRATION}
+    )
+    const refreshToken = await jwt.sign(
+        {'id': userId},
+        process.env.REFRESH_TOKEN_SECRET
+    )
+
+    return {'accessToken':accessToken, 'refreshToken':refreshToken}
+}
+
 const login = async (req:Request, res:Response)=>{
     console.log('login')
     const email = req.body.email
@@ -63,26 +77,15 @@ const login = async (req:Request, res:Response)=>{
         const match = await bcrypt.compare(password, user.password)
         if(!match) return sendError(res, "incorrect user or password")
 
-        const accessToken = await jwt.sign(
-            {'id': user._id},
-            process.env.ACCESS_TOKEN_SECRET,
-            {'expiresIn':process.env.JWT_TOKEN_EXPIRATION}
-        )
+        const tokens = await generateTokens(user._id.toString())
+       
 
-        const refreshToken = await jwt.sign(
-            {'id': user._id},
-            process.env.REFRESH_TOKEN_SECRET
-        )
-
-        if (user.refresh_tokens == null) user.refresh_tokens = [refreshToken]
-        else user.refresh_tokens.push(refreshToken)
+        if (user.refresh_tokens == null) user.refresh_tokens = [tokens.refreshToken]
+        else user.refresh_tokens.push(tokens.refreshToken)
         await user.save()
 
         // check if the return is really needed
-        return res.status(200).send({
-            'accesstoken': accessToken,
-            'refreshToken': refreshToken
-        })    
+        return res.status(200).send(tokens)    
     } catch(err){
         console.log("error: " + err)
         sendError(res, "failed checking user")
@@ -111,25 +114,14 @@ const refresh = async (req:Request, res:Response)=>{
             return sendError(res, 'failed validating token')
         }
 
-        const newAccessToken = await jwt.sign(
-            {'id': user._id},
-            process.env.ACCESS_TOKEN_SECRET,
-            {'expiresIn':process.env.JWT_TOKEN_EXPIRATION}
-        )
-
-        const newRefreshToken = await jwt.sign(
-            {'id': user._id},
-            process.env.REFRESH_TOKEN_SECRET
-        )
+        const tokens = await generateTokens(userObj._id.toString())
+        
         // TODO:
         // missing assignment in this statement 
-        userObj.refresh_tokens[userObj.refresh_tokens.indexOf(refreshToken)]
+        userObj.refresh_tokens[userObj.refresh_tokens.indexOf(refreshToken)] = tokens.refreshToken
         await userObj.save()
 
-        return res.status(200).send({
-            'accesstoken': newAccessToken,
-            'refreshToken': newRefreshToken
-        })
+        return res.status(200).send(tokens)
 
     }catch(err) {
         return sendError(res,'failed validating token')
