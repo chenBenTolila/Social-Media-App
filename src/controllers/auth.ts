@@ -27,21 +27,19 @@ const register = async (req:Request, res:Response)=>{
         if(user != null) {
             return sendError(res, "user already registered, try a different name")
         }
-    }catch (err){
-        console.log("error: " + err)
-        return sendError(res, "failed checking user")
-    }
-
-    // create new User & encrypt password
-    try{
+        
+        // create new User & encrypt password
         const salt = await bcrypt.genSalt(10)
         const encryptedPwd = await bcrypt.hash(password, salt)
-        let newUser = new User({
+        const newUser = new User({
             'email': email,
             'password': encryptedPwd
         })
-        newUser = await newUser.save()
-        return res.status(200).send(newUser)
+        await newUser.save()
+        return res.status(200).send({
+            'email' : email,
+            '_id' : newUser._id
+        })
 
     } catch(err) {
         return sendError(res,'fail ...')

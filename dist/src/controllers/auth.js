@@ -33,21 +33,18 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (user != null) {
             return sendError(res, "user already registered, try a different name");
         }
-    }
-    catch (err) {
-        console.log("error: " + err);
-        return sendError(res, "failed checking user");
-    }
-    // create new User & encrypt password
-    try {
+        // create new User & encrypt password
         const salt = yield bcrypt_1.default.genSalt(10);
         const encryptedPwd = yield bcrypt_1.default.hash(password, salt);
-        let newUser = new user_model_1.default({
+        const newUser = new user_model_1.default({
             'email': email,
             'password': encryptedPwd
         });
-        newUser = yield newUser.save();
-        return res.status(200).send(newUser);
+        yield newUser.save();
+        return res.status(200).send({
+            'email': email,
+            '_id': newUser._id
+        });
     }
     catch (err) {
         return sendError(res, 'fail ...');

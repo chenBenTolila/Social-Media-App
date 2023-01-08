@@ -18,7 +18,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const post_model_1 = __importDefault(require("../models/post_model"));
 const user_model_1 = __importDefault(require("../models/user_model"));
 const newPostMessage = 'This is the new test post message';
-const newPostSender = '999000';
+let newPostSender = '';
 let newPostId = '';
 const newPostMessageUpdated = 'This is the updated message';
 const userEmail = "user1@gmail.com";
@@ -27,10 +27,11 @@ let accessToken = '';
 beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
     yield post_model_1.default.remove();
     yield user_model_1.default.remove();
-    yield (0, supertest_1.default)(server_1.default).post('/auth/register').send({
+    const res = yield (0, supertest_1.default)(server_1.default).post('/auth/register').send({
         "email": userEmail,
         "password": userPassword
     });
+    newPostSender = res.body._id;
 }));
 function loginUser() {
     return __awaiter(this, void 0, void 0, function* () {
