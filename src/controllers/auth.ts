@@ -29,7 +29,7 @@ const register = async (req:Request, res:Response)=>{
         }
     }catch (err){
         console.log("error: " + err)
-        sendError(res, "failed checking user")
+        return sendError(res, "failed checking user")
     }
 
     // create new User & encrypt password
@@ -41,10 +41,10 @@ const register = async (req:Request, res:Response)=>{
             'password': encryptedPwd
         })
         newUser = await newUser.save()
-        res.status(200).send(newUser)
+        return res.status(200).send(newUser)
 
     } catch(err) {
-        sendError(res,'fail ...')
+        return sendError(res,'fail ...')
     }
 }
 
@@ -88,7 +88,7 @@ const login = async (req:Request, res:Response)=>{
         return res.status(200).send(tokens)    
     } catch(err){
         console.log("error: " + err)
-        sendError(res, "failed checking user")
+        return sendError(res, "failed checking user")
     }
 }
 
@@ -145,7 +145,7 @@ const logout = async (req:Request, res:Response)=>{
 
         userObj.refresh_tokens.splice(userObj.refresh_tokens.indexOf(refreshToken), 1)
         await userObj.save()
-        res.status(200).send()
+        return res.status(200).send()
 
     }catch(err) {
         return sendError(res,'failed validating token')
@@ -161,7 +161,7 @@ const authenticateMiddleware = async (req:Request, res:Response, next:NextFuncti
         const user = await jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
         req.body.userId = user.id
         console.log("token user: " + user)
-        next()
+        return next()
     }catch(err) {
         return sendError(res,'failed validating token')
     }

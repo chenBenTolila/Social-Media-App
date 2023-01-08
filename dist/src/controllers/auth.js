@@ -36,7 +36,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (err) {
         console.log("error: " + err);
-        sendError(res, "failed checking user");
+        return sendError(res, "failed checking user");
     }
     // create new User & encrypt password
     try {
@@ -47,10 +47,10 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             'password': encryptedPwd
         });
         newUser = yield newUser.save();
-        res.status(200).send(newUser);
+        return res.status(200).send(newUser);
     }
     catch (err) {
-        sendError(res, 'fail ...');
+        return sendError(res, 'fail ...');
     }
 });
 function generateTokens(userId) {
@@ -85,7 +85,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (err) {
         console.log("error: " + err);
-        sendError(res, "failed checking user");
+        return sendError(res, "failed checking user");
     }
 });
 function getTokenFromRequest(req) {
@@ -136,7 +136,7 @@ const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         userObj.refresh_tokens.splice(userObj.refresh_tokens.indexOf(refreshToken), 1);
         yield userObj.save();
-        res.status(200).send();
+        return res.status(200).send();
     }
     catch (err) {
         return sendError(res, 'failed validating token');
@@ -150,7 +150,7 @@ const authenticateMiddleware = (req, res, next) => __awaiter(void 0, void 0, voi
         const user = yield jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET);
         req.body.userId = user.id;
         console.log("token user: " + user);
-        next();
+        return next();
     }
     catch (err) {
         return sendError(res, 'failed validating token');
