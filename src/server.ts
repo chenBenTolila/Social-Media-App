@@ -1,30 +1,35 @@
+import dotenv from "dotenv";
+if (process.env.NODE_ENV == "test") {
+    dotenv.config({ path: "./.testenv" });
+} else {
+    dotenv.config();
+}
+
 import express from 'express'
 const app = express()
-import dotenv from 'dotenv'
-dotenv.config()
 
-import body_parser from 'body-parser'
+import bodyParser from 'body-parser'
 
-app.use(body_parser.urlencoded({extended:true,limit:'1mb'}))
-app.use(body_parser.json())
+app.use(bodyParser.urlencoded({extended:true, limit: '1mb'}))
+app.use(bodyParser.json())
 
 
-import mongoose from 'mongoose'
+import mongoose from "mongoose"
 mongoose.connect(process.env.DATABASE_URL) //,{useNewUrlParser:true})
 const db = mongoose.connection
 db.on('error',error=>{console.error(error)})
 db.once('open',()=>{console.log('connected to mongo DB')})
 
 app.use('/public',express.static('public'))
-
+ 
 import authRouter from './routes/auth_route.js'
 app.use('/auth',authRouter)
 
 import postRouter from './routes/post_route.js'
 app.use('/post',postRouter)
 
-import messageRouter from './routes/message_route.js'
-app.use('/message',messageRouter)
+// import messageRouter from './routes/message_route.js'
+// app.use('/message',messageRouter)
 
 import swaggerUI from "swagger-ui-express"
 import swaggerJsDoc from "swagger-jsdoc"

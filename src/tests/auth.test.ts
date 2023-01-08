@@ -68,9 +68,9 @@ describe("Auth Tests", ()=>{
         expect(response.statusCode).not.toEqual(200)
     })
 
-    jest.setTimeout(30000)
+    jest.setTimeout(15000)
     test("Test expired token", async ()=>{
-        await new Promise(r => setTimeout(r, 10000))
+        await new Promise(r => setTimeout(r, 6000))
         const response = await request(app).get('/post').set('Authorization', 'JWT ' + accessToken)
         expect(response.statusCode).not.toEqual(200)
     })

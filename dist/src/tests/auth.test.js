@@ -70,9 +70,9 @@ describe("Auth Tests", () => {
         const response = yield (0, supertest_1.default)(server_1.default).get('/post').set('Authorization', 'JWT 1' + accessToken);
         expect(response.statusCode).not.toEqual(200);
     }));
-    jest.setTimeout(30000);
+    jest.setTimeout(15000);
     test("Test expired token", () => __awaiter(void 0, void 0, void 0, function* () {
-        yield new Promise(r => setTimeout(r, 10000));
+        yield new Promise(r => setTimeout(r, 6000));
         const response = yield (0, supertest_1.default)(server_1.default).get('/post').set('Authorization', 'JWT ' + accessToken);
         expect(response.statusCode).not.toEqual(200);
     }));
