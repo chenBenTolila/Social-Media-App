@@ -2,8 +2,6 @@ import { NextFunction, Request, Response } from 'express'
 import User from '../models/user_model'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-// unused import!
-import { use } from '../server'
 
 function sendError(res:Response, error:String) {
     res.status(400).send({
