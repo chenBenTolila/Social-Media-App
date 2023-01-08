@@ -97,7 +97,7 @@ const refresh = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return sendError(res, 'authentication missing');
     // verifying the refresh token
     try {
-        const user = yield jsonwebtoken_1.default.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+        const user = jsonwebtoken_1.default.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
         const userObj = yield user_model_1.default.findById(user.id);
         if (userObj == null)
             return sendError(res, 'failed validating token');
@@ -122,7 +122,7 @@ const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (refreshToken == null)
         return sendError(res, 'authentication missing');
     try {
-        const user = yield jsonwebtoken_1.default.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+        const user = jsonwebtoken_1.default.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
         const userObj = yield user_model_1.default.findById(user.id);
         if (userObj == null)
             return sendError(res, 'failed validating token');
@@ -144,7 +144,7 @@ const authenticateMiddleware = (req, res, next) => __awaiter(void 0, void 0, voi
     if (token == null)
         return sendError(res, 'authentication missing');
     try {
-        const user = yield jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        const user = jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET);
         req.body.userId = user.id;
         console.log("token user: " + user);
         return next();
