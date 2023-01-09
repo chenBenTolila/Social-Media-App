@@ -12,6 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 const post_model_1 = __importDefault(require("../models/post_model"));
+const getAllPostsEvent = () => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("");
+    try {
+        const posts = yield post_model_1.default.find();
+        return { status: 'OK', data: posts };
+    }
+    catch (err) {
+        return { status: 'FAIL', data: "" };
+    }
+});
 const getAllPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let posts = {};
@@ -63,5 +73,5 @@ const putPostById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(400).send({ 'error': 'fail adding new post to db' });
     }
 });
-module.exports = { getAllPosts, addNewPost, getPostById, putPostById };
+module.exports = { getAllPosts, addNewPost, getPostById, putPostById, getAllPostsEvent };
 //# sourceMappingURL=post.js.map
