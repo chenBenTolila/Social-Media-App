@@ -55,7 +55,7 @@ describe("my awesome project", () => {
         mongoose_1.default.connection.close();
     });
     test("should work", (done) => {
-        clientSocket.once("echo:echo", (arg) => {
+        clientSocket.once("echo:echo_res", (arg) => {
             console.log("echo:echo");
             expect(arg.msg).toBe('hello');
             done();
