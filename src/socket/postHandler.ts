@@ -18,7 +18,7 @@ export = (io:Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
         socket.emit('post:add_new', payload)
     }
     
-    console.log('register echo handlers')
+    console.log('register post handlers')
     socket.on("post:get_all", getAllPosts)
     socket.on("post:get_by_id", getPostById)
     socket.on("post:add_new", addNewPost)
