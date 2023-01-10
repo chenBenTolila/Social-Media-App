@@ -30,8 +30,6 @@ app.use('/auth',authRouter)
 import postRouter from './routes/post_route.js'
 app.use('/post',postRouter)
 
-// import messageRouter from './routes/message_route.js'
-// app.use('/message',messageRouter)
 
 import swaggerUI from "swagger-ui-express"
 import swaggerJsDoc from "swagger-jsdoc"

@@ -26,8 +26,6 @@ const auth_route_js_1 = __importDefault(require("./routes/auth_route.js"));
 app.use('/auth', auth_route_js_1.default);
 const post_route_js_1 = __importDefault(require("./routes/post_route.js"));
 app.use('/post', post_route_js_1.default);
-// import messageRouter from './routes/message_route.js'
-// app.use('/message',messageRouter)
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 if (process.env.NODE_ENV == "development") {

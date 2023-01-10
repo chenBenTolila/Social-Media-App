@@ -45,16 +45,6 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:3000/message
-Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYjJlZDI5NDc2NzI1ZjQwYjQyM2EzMSIsImlhdCI6MTY3MjY3MDUwOCwiZXhwIjoxNjcyNjc0MTA4fQ.i31SrhcBE4Bwq4U_3BpEh3UtGXtShTZrPKJgkMhNRGM
-
-###
-
-POST http://localhost:3000/message
-Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYjJlZDI5NDc2NzI1ZjQwYjQyM2EzMSIsImlhdCI6MTY3MjY3MDUwOCwiZXhwIjoxNjcyNjc0MTA4fQ.i31SrhcBE4Bwq4U_3BpEh3UtGXtShTZrPKJgkMhNRGM
-
-###
-
 POST http://localhost:3000/auth/register
 Content-Type: application/json
 
