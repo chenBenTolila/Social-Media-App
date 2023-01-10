@@ -23,7 +23,7 @@ let client1: Client
 let client2: Client
 
 
-function clientSocketConnect(clientSocket):Promise<string> {
+function clientSocketConnect(clientSocket: Socket<DefaultEventsMap, DefaultEventsMap>):Promise<string> {
     return new Promise((resolve)=> {
         clientSocket.on("connect", () =>{
             resolve("1")

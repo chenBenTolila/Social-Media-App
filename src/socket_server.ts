@@ -28,6 +28,7 @@ export = (server: http.Server) => {
         postHandler(io, socket)
         chatHandler(io, socket)
         
+        //register the socket in a room according to the user id, for the chat
         const userId = socket.data.user
         await socket.join(userId)
     });

@@ -38,6 +38,7 @@ module.exports = (server) => {
         (0, echoHandler_1.default)(io, socket);
         (0, postHandler_1.default)(io, socket);
         (0, chatHandler_1.default)(io, socket);
+        //register the socket in a room according to the user id, for the chat
         const userId = socket.data.user;
         yield socket.join(userId);
     }));
