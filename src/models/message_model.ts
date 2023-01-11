@@ -9,7 +9,7 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    receiver: {
+    reciever: {
         type: String,
         required: true
     }

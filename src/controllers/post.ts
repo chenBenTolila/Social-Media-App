@@ -1,4 +1,3 @@
-import { Request, Response } from 'express'
 import Post from '../models/post_model'
 
 import request from "../request";

@@ -18,6 +18,7 @@ const socket_io_client_1 = __importDefault(require("socket.io-client"));
 const supertest_1 = __importDefault(require("supertest"));
 const post_model_1 = __importDefault(require("../models/post_model"));
 const user_model_1 = __importDefault(require("../models/user_model"));
+const message_model_1 = __importDefault(require("../models/message_model"));
 const userEmail = "user1@gmail.com";
 const userPassword = "12345";
 const userEmail2 = "user2@gmail.com";
@@ -61,15 +62,19 @@ describe("my awesome project", () => {
     beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
         yield post_model_1.default.remove();
         yield user_model_1.default.remove();
+        yield message_model_1.default.remove();
         client1 = yield connectUser(userEmail, userPassword);
         client2 = yield connectUser(userEmail2, userPassword2);
     }));
-    afterAll(() => {
+    afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
         client1.socket.close();
         client2.socket.close();
+        yield post_model_1.default.remove();
+        yield user_model_1.default.remove();
+        yield message_model_1.default.remove();
         app_1.default.close();
         mongoose_1.default.connection.close();
-    });
+    }));
     test("should work", (done) => {
         client1.socket.once("echo:echo_res", (arg) => {
             console.log("echo:echo");
@@ -227,9 +232,66 @@ describe("my awesome project", () => {
             expect(args.to).toBe(client2.id);
             expect(args.message).toBe(message);
             expect(args.from).toBe(client1.id);
+            expect(args.res.status).toBe("ok");
             done();
         });
-        client1.socket.emit("chat:send_message", { 'to': client2.id, 'message': message });
+        client1.socket.emit("chat:send_message", { to: client2.id, message: message });
+    });
+    test("test chat send message with no message", (done) => {
+        client2.socket.once("chat:message", (args) => {
+            expect(args.res.status).toBe("fail");
+            done();
+        });
+        console.log("test chat send message");
+        client1.socket.emit("chat:send_message", {
+            to: client2.id,
+        });
+    });
+    test("test chat get all messages that send by user", (done) => {
+        client1.socket.once("chat:get_all.response", (args) => {
+            expect(args.body.length).toBe(1);
+            console.log("response in tests: " + args);
+            //expect(args[0].body[0].reciever).toBe(client2.id)
+            expect(args.body[0].body).toBe(message);
+            expect(args.body[0].sender).toBe(client1.id);
+            expect(args.status).toBe("ok");
+            done();
+        });
+        console.log("test chat get all messages by specific sender");
+        client1.socket.emit("chat:get_all", {
+            sender: client1.id,
+        });
+    });
+    test("test chat get all messages that send to user", (done) => {
+        client1.socket.once("chat:get_all.response", (arg) => {
+            expect(arg.body.length).toBe(0);
+            expect(arg.status).toBe("ok");
+            done();
+        });
+        console.log("test chat get all messages");
+        client1.socket.emit("chat:get_all", {
+            reciever: client1.id,
+        });
+    });
+    test("test chat get all messages that send by user that did not send any message", (done) => {
+        client1.socket.once("chat:get_all.response", (arg) => {
+            expect(arg.body.length).toBe(0);
+            expect(arg.status).toBe("ok");
+            done();
+        });
+        console.log("test chat get all messages");
+        client1.socket.emit("chat:get_all", {
+            sender: client1.id + 2,
+        });
+    });
+    test("test chat get all messages ", (done) => {
+        client1.socket.once("chat:get_all.response", (arg) => {
+            expect(arg.body.length).toBe(1);
+            expect(arg.status).toBe("ok");
+            done();
+        });
+        console.log("test chat get all messages");
+        client1.socket.emit("chat:get_all");
     });
 });
 //# sourceMappingURL=socket.test.js.map

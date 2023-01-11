@@ -12,7 +12,7 @@ class request {
     }
     //ctor
     static fromRestRequest(req) {
-        return new request(req.body, req.body.userId, req.query, req.params); // I have change to this -> req.body.userId, need to check for problems
+        return new request(req.body, req.body.userId, req.query, req.params); // I changed to this form -> req.body.userId, need to check for problems
     }
 }
 module.exports = request;
