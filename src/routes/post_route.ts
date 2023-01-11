@@ -9,6 +9,7 @@ import express from 'express'
 const router = express.Router()
 import post from '../controllers/post.js'
 import auth from '../controllers/auth.js'
+import request from "../request"
 
 /**
 * @swagger
@@ -57,7 +58,19 @@ import auth from '../controllers/auth.js'
  *                  $ref: '#/components/schemas/Post'
  *  
  */
-router.get('/', auth.authenticateMiddleware, post.getAllPosts)
+//router.get('/', auth.authenticateMiddleware, post.getAllPosts)
+router.get("/", auth.authenticateMiddleware, async (req, res) => {
+    try {
+        const response = await post.getAllPosts(request.fromRestRequest(req))
+        response.sendRestResponse(res)
+    } catch (err) {
+        res.status(400).send({
+            status: "fail",
+            message: err.message,
+        })
+    }
+})
+
 
 
 /**

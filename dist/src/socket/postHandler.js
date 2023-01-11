@@ -12,10 +12,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 const post_1 = __importDefault(require("../controllers/post"));
+const request_1 = __importDefault(require("../request"));
 module.exports = (io, socket) => {
-    const getAllPosts = () => __awaiter(void 0, void 0, void 0, function* () {
-        const res = yield post_1.default.getAllPostsEvent();
-        socket.emit('post:get_all', res);
+    const getAllPosts = (body) => __awaiter(void 0, void 0, void 0, function* () {
+        // const res = await postController.getAllPostsEvent()
+        // socket.emit('post:get_all', res)
+        console.log("get all posts handler with socketId: %s", socket.data.user);
+        try {
+            const response = yield post_1.default.getAllPosts(new request_1.default(body, socket.data.user, null, null));
+            console.log("trying to send post:get_all.response");
+            socket.emit("post:get.response", response);
+        }
+        catch (err) {
+            socket.emit("post:get.response", { status: "fail" });
+        }
     });
     const getPostById = (payload) => {
         socket.emit('post:get_by_id', payload);
@@ -24,8 +34,8 @@ module.exports = (io, socket) => {
         socket.emit('post:add_new', payload);
     };
     console.log('register post handlers');
-    socket.on("post:get_all", getAllPosts);
-    socket.on("post:get_by_id", getPostById);
-    socket.on("post:add_new", addNewPost);
+    socket.on("post:get", getAllPosts);
+    socket.on("post:get:id", getPostById);
+    socket.on("post:post", addNewPost);
 };
 //# sourceMappingURL=postHandler.js.map

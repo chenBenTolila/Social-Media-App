@@ -1,6 +1,27 @@
 import { Request, Response } from 'express'
 import Post from '../models/post_model'
 
+import request from "../request";
+import response from "../response";
+import error from "../error";
+
+
+const getAllPosts = async (req:request) => {
+    console.log("new version of get all posts")
+    try {
+        let posts = {}
+        if (req.query != null && req.query.sender != null) {
+            posts = await Post.find({ sender: req.query.sender })
+        } else {
+            posts = await Post.find()
+        }
+        return new response(posts, req.userId, null)
+    } catch (err) {
+        console.log("err")
+        return new response(null, req.userId, new error(400, err.message))
+    }
+}
+
 const getAllPostsEvent = async () => {
     console.log("")
     try{
@@ -11,21 +32,21 @@ const getAllPostsEvent = async () => {
     }
 }
 
-const getAllPosts = async (req:Request, res:Response)=>{
+// const getAllPosts = async (req:Request, res:Response)=>{
 
-    try{
-        let posts = {}
-        if(req.query.sender == null) {
-            posts = await Post.find()
-        }
-        else {
-            posts = await Post.find({'sender' : req.query.sender})
-        }
-        res.status(200).send(posts)
-    }catch (err) {
-        res.status(400).send({'error': "fail to get posts from db"})
-    }
-}
+//     try{
+//         let posts = {}
+//         if(req.query.sender == null) {
+//             posts = await Post.find()
+//         }
+//         else {
+//             posts = await Post.find({'sender' : req.query.sender})
+//         }
+//         res.status(200).send(posts)
+//     }catch (err) {
+//         res.status(400).send({'error': "fail to get posts from db"})
+//     }
+// }
 
 const getPostById = async (req:Request, res:Response)=>{
     console.log(req.params.id)

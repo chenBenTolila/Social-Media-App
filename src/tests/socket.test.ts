@@ -1,7 +1,7 @@
 import server from "../app"
 import mongoose from "mongoose"
-import Client, { Socket } from "socket.io-client";
-import { DefaultEventsMap } from "@socket.io/component-emitter";
+import Client, { Socket } from "socket.io-client"
+import { DefaultEventsMap } from "@socket.io/component-emitter"
 
 import request from 'supertest'
 import Post from '../models/post_model'
@@ -13,6 +13,13 @@ const userPassword = "12345"
 const userEmail2 = "user2@gmail.com"
 const userPassword2 = "12345"
 
+const firstPostMessage = 'this is the first new test post message'
+const secondPostMessage = 'this is the second new test post message'
+let newPostId = ""
+const newPostMessageUpdated = 'This is the updated first post message'
+
+const message = "hi... test 123"
+ 
 type Client = {
     socket : Socket<DefaultEventsMap, DefaultEventsMap>,
     accessToken : string,
@@ -31,7 +38,7 @@ function clientSocketConnect(clientSocket: Socket<DefaultEventsMap, DefaultEvent
     })
 }
 
-const connectUser = async (userEmail, userPassword)=>{
+const connectUser = async (userEmail: string, userPassword: string)=>{
     const response1 = await request(server).post('/auth/register').send({
         "email": userEmail,
         "password": userPassword 
@@ -56,7 +63,7 @@ const connectUser = async (userEmail, userPassword)=>{
 }
 
 describe("my awesome project", () => {
-    // jest.setTimeout(15000)
+    jest.setTimeout(15000)
 
     beforeAll(async () => {
         await Post.remove()
@@ -83,16 +90,17 @@ describe("my awesome project", () => {
     });
 
     test("Post get all test", (done) => {
-        client1.socket.once('post:get_all', (arg) => {
-            console.log("on any " + arg)
-            expect(arg.status).toBe('OK')
+        client1.socket.once("post:get.response", (arg) => {
+            console.log("on any" + arg);
+            expect(arg.status).toBe("ok");
+            expect(arg.body.length).toEqual(0);
             done();
         });
-        client1.socket.emit("post:get_all", "stam")
+        console.log("test post get all");
+        client1.socket.emit("post:get", "stam");
     });
 
     test("Test chat message", (done)=>{
-        const message = "hi... test 123"
         client2.socket.once('chat:message',(args)=>{
             expect(args.to).toBe(client2.id)
             expect(args.message).toBe(message)

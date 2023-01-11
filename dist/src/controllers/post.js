@@ -12,6 +12,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 const post_model_1 = __importDefault(require("../models/post_model"));
+const response_1 = __importDefault(require("../response"));
+const error_1 = __importDefault(require("../error"));
+const getAllPosts = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("new version of get all posts");
+    try {
+        let posts = {};
+        if (req.query != null && req.query.sender != null) {
+            posts = yield post_model_1.default.find({ sender: req.query.sender });
+        }
+        else {
+            posts = yield post_model_1.default.find();
+        }
+        return new response_1.default(posts, req.userId, null);
+    }
+    catch (err) {
+        console.log("err");
+        return new response_1.default(null, req.userId, new error_1.default(400, err.message));
+    }
+});
 const getAllPostsEvent = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log("");
     try {
@@ -22,21 +41,20 @@ const getAllPostsEvent = () => __awaiter(void 0, void 0, void 0, function* () {
         return { status: 'FAIL', data: "" };
     }
 });
-const getAllPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        let posts = {};
-        if (req.query.sender == null) {
-            posts = yield post_model_1.default.find();
-        }
-        else {
-            posts = yield post_model_1.default.find({ 'sender': req.query.sender });
-        }
-        res.status(200).send(posts);
-    }
-    catch (err) {
-        res.status(400).send({ 'error': "fail to get posts from db" });
-    }
-});
+// const getAllPosts = async (req:Request, res:Response)=>{
+//     try{
+//         let posts = {}
+//         if(req.query.sender == null) {
+//             posts = await Post.find()
+//         }
+//         else {
+//             posts = await Post.find({'sender' : req.query.sender})
+//         }
+//         res.status(200).send(posts)
+//     }catch (err) {
+//         res.status(400).send({'error': "fail to get posts from db"})
+//     }
+// }
 const getPostById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(req.params.id);
     try {
