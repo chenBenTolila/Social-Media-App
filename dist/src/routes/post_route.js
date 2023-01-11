@@ -103,7 +103,6 @@ router.get("/", auth_js_1.default.authenticateMiddleware, (req, res) => __awaite
  *               $ref: '#/components/schemas/Post'
  *
  */
-//router.get('/:id', auth.authenticateMiddleware, post.getPostById)
 router.get("/:id", auth_js_1.default.authenticateMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const response = yield post_js_1.default.getPostById(request_1.default.fromRestRequest(req));
@@ -181,7 +180,6 @@ router.post("/", auth_js_1.default.authenticateMiddleware, (req, res) => __await
  *               $ref: '#/components/schemas/Post'
  *
  */
-//router.put('/:id', auth.authenticateMiddleware, post.putPostById)
 router.put("/:id", auth_js_1.default.authenticateMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const response = yield post_js_1.default.putPostById(request_1.default.fromRestRequest(req));

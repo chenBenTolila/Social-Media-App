@@ -96,7 +96,6 @@ router.get("/", auth.authenticateMiddleware, async (req, res) => {
  *               $ref: '#/components/schemas/Post'
  *  
  */
-//router.get('/:id', auth.authenticateMiddleware, post.getPostById)
 router.get("/:id", auth.authenticateMiddleware, async (req, res) => {
     try {
         const response = await post.getPostById(request.fromRestRequest(req))
@@ -175,7 +174,6 @@ router.post("/", auth.authenticateMiddleware, async (req, res) => {
  *               $ref: '#/components/schemas/Post'
  *  
  */
-//router.put('/:id', auth.authenticateMiddleware, post.putPostById)
 router.put("/:id", auth.authenticateMiddleware, async (req, res) => {
     try {
         const response = await post.putPostById(request.fromRestRequest(req))
