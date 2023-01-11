@@ -23,14 +23,15 @@ const getAllPosts = async (req:request) => {
 }
 
 
-const getPostById = async (req:Request, res:Response)=>{
+const getPostById = async (req:request)=>{
     console.log(req.params.id)
 
-    try{
-        const post = await Post.findById(req.params.id)
-        res.status(200).send(post)
-    }catch (err) {
-        res.status(400).send({'error': "fail to get posts from db"})
+    try {
+        const posts = await Post.findById(req.params.id)
+        return new response(posts, req.userId, null)
+    } catch (err) {
+        console.log("fail to get post from db")
+        return new response(null, req.userId, new error(400, err.message))
     }
 }
 
@@ -52,13 +53,13 @@ const addNewPost = async (req: request)=>{
 }
 
 
-const putPostById = async (req:Request, res:Response)=>{
+const putPostById = async (req:request)=>{
     try{
         const post = await Post.findByIdAndUpdate(req.params.id, req.body, {new: true})
-        res.status(200).send(post)
+        return new response(post, req.userId, null)
     }catch (err){
         console.log("fail to update post in db")
-        res.status(400).send({'error': 'fail adding new post to db'})
+        return new response(null, req.userId, new error(400, err.message))
     }
 }
 

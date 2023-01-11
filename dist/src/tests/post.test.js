@@ -62,6 +62,15 @@ describe("Posts Tests", () => {
         expect(response.body.post.sender).toEqual(firstPostSender);
         firstPostId = response.body.post._id;
     }));
+    test("add second new post", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, supertest_1.default)(server_1.default).post('/post').set('Authorization', 'JWT ' + accessToken).send({
+            "message": secondPostMessage,
+            "sender": firstPostSender
+        });
+        expect(response.statusCode).toEqual(200);
+        expect(response.body.post.message).toEqual(secondPostMessage);
+        expect(response.body.post.sender).toEqual(firstPostSender);
+    }));
     test("get all posts", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default)
             .get("/post")
@@ -69,13 +78,13 @@ describe("Posts Tests", () => {
         expect(response.statusCode).toEqual(200);
         expect(response.body.post[0].message).toEqual(firstPostMessage);
         expect(response.body.post[0].sender).toEqual(firstPostSender);
-        expect(response.body.post.length).toEqual(1);
+        expect(response.body.post.length).toEqual(2);
     }));
     test("get post by id", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).get('/post/' + firstPostId).set('Authorization', 'JWT ' + accessToken);
         expect(response.statusCode).toEqual(200);
-        expect(response.body.message).toEqual(firstPostMessage);
-        expect(response.body.sender).toEqual(firstPostSender);
+        expect(response.body.post.message).toEqual(firstPostMessage);
+        expect(response.body.post.sender).toEqual(firstPostSender);
     }));
     test("get post by wrong id fails", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).get('/post/12345').set('Authorization', 'JWT ' + accessToken);
@@ -89,7 +98,7 @@ describe("Posts Tests", () => {
         console.log(response.body);
         expect(response.body.post[0].message).toEqual(firstPostMessage);
         expect(response.body.post[0].sender).toEqual(firstPostSender);
-        expect(response.body.post.length).toEqual(1);
+        expect(response.body.post.length).toEqual(2);
     }));
     test("get post by wrong sender", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default)
@@ -105,12 +114,12 @@ describe("Posts Tests", () => {
             "sender": firstPostSender
         });
         expect(response.statusCode).toEqual(200);
-        expect(response.body.message).toEqual(newPostMessageUpdated);
-        expect(response.body.sender).toEqual(firstPostSender);
+        expect(response.body.post.message).toEqual(newPostMessageUpdated);
+        expect(response.body.post.sender).toEqual(firstPostSender);
         response = yield (0, supertest_1.default)(server_1.default).get('/post/' + firstPostId).set('Authorization', 'JWT ' + accessToken);
         expect(response.statusCode).toEqual(200);
-        expect(response.body.message).toEqual(newPostMessageUpdated);
-        expect(response.body.sender).toEqual(firstPostSender);
+        expect(response.body.post.message).toEqual(newPostMessageUpdated);
+        expect(response.body.post.sender).toEqual(firstPostSender);
         response = yield (0, supertest_1.default)(server_1.default).put('/post/12345').set('Authorization', 'JWT ' + accessToken).send({
             "message": newPostMessageUpdated,
             "sender": firstPostSender
@@ -120,8 +129,8 @@ describe("Posts Tests", () => {
             "message": newPostMessageUpdated,
         });
         expect(response.statusCode).toEqual(200);
-        expect(response.body.message).toEqual(newPostMessageUpdated);
-        expect(response.body.sender).toEqual(firstPostSender);
+        expect(response.body.post.message).toEqual(newPostMessageUpdated);
+        expect(response.body.post.sender).toEqual(firstPostSender);
     }));
 });
 // newPostId

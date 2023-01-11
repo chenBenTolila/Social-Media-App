@@ -26,6 +26,15 @@ module.exports = (io, socket) => {
         }
     });
     const getPostById = (body) => __awaiter(void 0, void 0, void 0, function* () {
+        console.log("get post by id handler with socketId: %s", socket.data.user);
+        try {
+            const response = yield post_1.default.getPostById(new request_1.default(body, socket.data.user, null, body));
+            console.log("trying to send post:get:id.response");
+            socket.emit("post:get:id.response", response);
+        }
+        catch (err) {
+            socket.emit("post:get:id.response", { status: "fail" });
+        }
     });
     const addNewPost = (body) => __awaiter(void 0, void 0, void 0, function* () {
         console.log("new post handler with socketId: %s", socket.data.user);
@@ -38,9 +47,33 @@ module.exports = (io, socket) => {
             socket.emit("post:post.response", { status: "fail" });
         }
     });
+    const getPostBySender = (body) => __awaiter(void 0, void 0, void 0, function* () {
+        console.log("get post by sender handler with socketId: %s", socket.data.user);
+        try {
+            const response = yield post_1.default.getAllPosts(new request_1.default(body, socket.data.user, body, null));
+            console.log("trying to send post:get:sender.response");
+            socket.emit("post:get:sender.response", response);
+        }
+        catch (err) {
+            socket.emit("post:get:sender.response", { status: "fail" });
+        }
+    });
+    const updatePostById = (body) => __awaiter(void 0, void 0, void 0, function* () {
+        console.log("update post by id handler with socketId: %s", socket.data.user);
+        try {
+            const response = yield post_1.default.putPostById(new request_1.default(body, socket.data.user, null, body));
+            console.log("trying to send post:put.response");
+            socket.emit("post:put.response", response);
+        }
+        catch (err) {
+            socket.emit("post:put.response", { status: "fail" });
+        }
+    });
     console.log('register post handlers');
     socket.on("post:get", getAllPosts);
     socket.on("post:get:id", getPostById);
     socket.on("post:post", addNewPost);
+    socket.on("post:get:sender", getPostBySender);
+    socket.on("post:put", updatePostById);
 };
 //# sourceMappingURL=postHandler.js.map

@@ -57,6 +57,16 @@ describe("Posts Tests", ()=>{
         firstPostId = response.body.post._id
     })
 
+    test("add second new post", async ()=>{
+        const response = await request(app).post('/post').set('Authorization', 'JWT ' + accessToken).send({
+            "message": secondPostMessage,
+            "sender": firstPostSender
+        })
+        expect(response.statusCode).toEqual(200)
+        expect(response.body.post.message).toEqual(secondPostMessage)
+        expect(response.body.post.sender).toEqual(firstPostSender)
+    })
+
     test("get all posts", async ()=>{
         const response = await request(app)
             .get("/post")
@@ -64,15 +74,15 @@ describe("Posts Tests", ()=>{
         expect(response.statusCode).toEqual(200);
         expect(response.body.post[0].message).toEqual(firstPostMessage);
         expect(response.body.post[0].sender).toEqual(firstPostSender);
-        expect(response.body.post.length).toEqual(1);
+        expect(response.body.post.length).toEqual(2);
     })
 
     
     test("get post by id",async ()=>{
         const response = await request(app).get('/post/' + firstPostId).set('Authorization', 'JWT ' + accessToken)
         expect(response.statusCode).toEqual(200)
-        expect(response.body.message).toEqual(firstPostMessage)
-        expect(response.body.sender).toEqual(firstPostSender)
+        expect(response.body.post.message).toEqual(firstPostMessage)
+        expect(response.body.post.sender).toEqual(firstPostSender)
     })
 
     test("get post by wrong id fails",async ()=>{
@@ -88,7 +98,7 @@ describe("Posts Tests", ()=>{
         console.log(response.body);
         expect(response.body.post[0].message).toEqual(firstPostMessage);
         expect(response.body.post[0].sender).toEqual(firstPostSender);
-        expect(response.body.post.length).toEqual(1);
+        expect(response.body.post.length).toEqual(2);
     })
 
     test("get post by wrong sender", async () => {
@@ -106,13 +116,13 @@ describe("Posts Tests", ()=>{
             "sender": firstPostSender
         })
         expect(response.statusCode).toEqual(200)
-        expect(response.body.message).toEqual(newPostMessageUpdated)
-        expect(response.body.sender).toEqual(firstPostSender)
+        expect(response.body.post.message).toEqual(newPostMessageUpdated)
+        expect(response.body.post.sender).toEqual(firstPostSender)
 
         response = await request(app).get('/post/' + firstPostId).set('Authorization', 'JWT ' + accessToken)
         expect(response.statusCode).toEqual(200)
-        expect(response.body.message).toEqual(newPostMessageUpdated)
-        expect(response.body.sender).toEqual(firstPostSender)
+        expect(response.body.post.message).toEqual(newPostMessageUpdated)
+        expect(response.body.post.sender).toEqual(firstPostSender)
 
         response = await request(app).put('/post/12345').set('Authorization', 'JWT ' + accessToken).send({
             "message": newPostMessageUpdated,
@@ -124,8 +134,8 @@ describe("Posts Tests", ()=>{
             "message": newPostMessageUpdated,
         })
         expect(response.statusCode).toEqual(200)
-        expect(response.body.message).toEqual(newPostMessageUpdated)
-        expect(response.body.sender).toEqual(firstPostSender)
+        expect(response.body.post.message).toEqual(newPostMessageUpdated)
+        expect(response.body.post.sender).toEqual(firstPostSender)
     })
 
 })
