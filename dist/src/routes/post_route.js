@@ -128,7 +128,19 @@ router.get('/:id', auth_js_1.default.authenticateMiddleware, post_js_1.default.g
  *               $ref: '#/components/schemas/Post'
  *
  */
-router.post('/', auth_js_1.default.authenticateMiddleware, post_js_1.default.addNewPost);
+//router.post('/', auth.authenticateMiddleware, post.addNewPost)
+router.post("/", auth_js_1.default.authenticateMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const response = yield post_js_1.default.addNewPost(request_1.default.fromRestRequest(req));
+        response.sendRestResponse(res);
+    }
+    catch (err) {
+        res.status(400).send({
+            status: "fail",
+            message: err.message,
+        });
+    }
+}));
 /**
  * @swagger
  * /post/{id}:

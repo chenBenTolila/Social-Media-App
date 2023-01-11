@@ -58,9 +58,9 @@ describe("Posts Tests", () => {
             "sender": firstPostSender
         });
         expect(response.statusCode).toEqual(200);
-        expect(response.body.message).toEqual(firstPostMessage);
-        expect(response.body.sender).toEqual(firstPostSender);
-        firstPostId = response.body._id;
+        expect(response.body.post.message).toEqual(firstPostMessage);
+        expect(response.body.post.sender).toEqual(firstPostSender);
+        firstPostId = response.body.post._id;
     }));
     test("get all posts", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default)

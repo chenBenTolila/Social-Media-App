@@ -89,11 +89,42 @@ describe("my awesome project", () => {
         client1.socket.emit("echo:echo", { 'msg': 'hello' })
     });
 
+    test("Post add new test", (done) => {
+        client1.socket.once("post:post.response", (arg) => {
+            console.log("on any" + arg)
+            expect(arg.body.message).toBe(firstPostMessage)
+            expect(arg.body.sender).toBe(client1.id)
+            expect(arg.status).toBe("ok")
+            newPostId = arg.body._id
+            done()
+        })
+        console.log("test post add new post")
+        client1.socket.emit("post:post", {
+            message: firstPostMessage,
+            sender: client1.id,
+        })
+    })
+
+    test("Post add new test by a different user", (done) => {
+        client2.socket.once("post:post.response", (arg) => {
+            console.log("on any" + arg)
+            expect(arg.body.message).toBe(secondPostMessage)
+            expect(arg.body.sender).toBe(client2.id)
+            expect(arg.status).toBe("ok")
+            done()
+        })
+        console.log("test post add new post")
+        client2.socket.emit("post:post", {
+            message: secondPostMessage,
+            sender: client2.id,
+        })
+    })
+
     test("Post get all test", (done) => {
         client1.socket.once("post:get.response", (arg) => {
             console.log("on any" + arg);
             expect(arg.status).toBe("ok");
-            expect(arg.body.length).toEqual(0);
+            expect(arg.body.length).toEqual(2);
             done();
         });
         console.log("test post get all");

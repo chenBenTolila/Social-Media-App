@@ -7,8 +7,6 @@ export = (io:Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
     socket:Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>) => {
 
     const getAllPosts = async (body) => {
-        // const res = await postController.getAllPostsEvent()
-        // socket.emit('post:get_all', res)
         console.log(
             "get all posts handler with socketId: %s",
             socket.data.user
@@ -24,17 +22,24 @@ export = (io:Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
         }
     }
     
-    const getPostById = (payload) => {
-        socket.emit('post:get_by_id', payload)
+    const getPostById = async (body) => {
     }
 
-    const addNewPost = (payload) => {
-        socket.emit('post:add_new', payload)
+    const addNewPost = async (body) => {
+        console.log("new post handler with socketId: %s", socket.data.user)
+        try {
+            const response = await postController.addNewPost(
+                new request(body, socket.data.user, null, null)
+            );
+            console.log("trying to send post:post.response");
+            socket.emit("post:post.response", response);
+        } catch (err) {
+            socket.emit("post:post.response", { status: "fail" });
+        }
     }
     
     console.log('register post handlers')
     socket.on("post:get", getAllPosts)
     socket.on("post:get:id", getPostById)
     socket.on("post:post", addNewPost)
-
 }
