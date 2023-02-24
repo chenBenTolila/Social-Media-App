@@ -20,17 +20,22 @@ function sendError(res, error) {
     });
 }
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('register');
-    const email = req.body.email;
+    console.log('register in backend');
+    const email = req.body._email;
     const password = req.body.password;
+    const name = req.body.name;
+    const avatarUrl = req.body.image;
+    console.log("url: " + avatarUrl);
     //check if credentials are valid
-    if (email == null || password == null) {
+    if (email == null || password == null || name == null) {
+        console.log('empty credentials');
         return sendError(res, "please provide valid email and password");
     }
     // check if the user is not already registered
     try {
         const user = yield user_model_1.default.findOne({ 'email': email });
         if (user != null) {
+            console.log('user already registeredd');
             return sendError(res, "user already registered, try a different name");
         }
         // create new User & encrypt password
@@ -38,12 +43,16 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const encryptedPwd = yield bcrypt_1.default.hash(password, salt);
         const newUser = new user_model_1.default({
             'email': email,
-            'password': encryptedPwd
+            'password': encryptedPwd,
+            'name': name,
+            'imageUrl': avatarUrl,
         });
+        console.log('saving new user');
         yield newUser.save();
+        // TODO: fix the return value - need to change the return value to email instead of id
         return res.status(200).send({
             'email': email,
-            '_id': newUser._id
+            '_id': newUser._id,
         });
     }
     catch (err) {

@@ -10,12 +10,17 @@ function sendError(res:Response, error:String) {
 }
 
 const register = async (req:Request, res:Response)=>{
-    console.log('register')
-    const email = req.body.email
+    console.log('register in backend')
+
+    const email = req.body._email
     const password = req.body.password
+    const name = req.body.name
+    const avatarUrl = req.body.image
+    console.log("url: " + avatarUrl)
 
     //check if credentials are valid
-    if (email == null || password == null) {
+    if (email == null || password == null || name == null) {
+        console.log('empty credentials')
         return sendError(res, "please provide valid email and password")
     }
 
@@ -23,6 +28,7 @@ const register = async (req:Request, res:Response)=>{
     try {
         const user = await User.findOne({'email': email})
         if(user != null) {
+            console.log('user already registeredd')
             return sendError(res, "user already registered, try a different name")
         }
         
@@ -31,12 +37,16 @@ const register = async (req:Request, res:Response)=>{
         const encryptedPwd = await bcrypt.hash(password, salt)
         const newUser = new User({
             'email': email,
-            'password': encryptedPwd
+            'password': encryptedPwd,
+            'name': name,
+            'imageUrl': avatarUrl,
         })
+        console.log('saving new user')
         await newUser.save()
+        // TODO: fix the return value - need to change the return value to email instead of id
         return res.status(200).send({
             'email' : email,
-            '_id' : newUser._id
+            '_id' : newUser._id,
         })
 
     } catch(err) {
