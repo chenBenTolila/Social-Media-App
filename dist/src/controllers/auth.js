@@ -67,27 +67,35 @@ function generateTokens(userId) {
     });
 }
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('login');
+    console.log('login in backend');
     const email = req.body.email;
     const password = req.body.password;
     if (email == null || password == null) {
+        console.log('credentials are empty');
         return sendError(res, "please provide valid email and password");
     }
+    console.log('credentials are not empty');
     try {
         const user = yield user_model_1.default.findOne({ 'email': email });
-        if (user == null)
+        if (user == null) {
+            console.log('user is null');
             return sendError(res, "incorrect user or password");
+        }
         const match = yield bcrypt_1.default.compare(password, user.password);
-        if (!match)
+        if (!match) {
+            console.log('not matching');
             return sendError(res, "incorrect user or password");
+        }
         const tokens = yield generateTokens(user._id.toString());
+        console.log('generated tokens');
         if (user.refresh_tokens == null)
             user.refresh_tokens = [tokens.refreshToken];
         else
             user.refresh_tokens.push(tokens.refreshToken);
         yield user.save();
+        console.log(tokens);
         // check if the return is really needed
-        return res.status(200).send(tokens);
+        return res.status(200).send({ 'tokens': tokens, 'userId': user._id });
     }
     catch (err) {
         console.log("error: " + err);

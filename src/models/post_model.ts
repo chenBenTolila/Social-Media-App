@@ -8,7 +8,11 @@ const postSchema = new mongoose.Schema({
     sender: {
         type: String,
         required: true
-    }
+    },
+    imageUrl: {
+        type: String,
+        required: true
+    },  
 })
 
 export = mongoose.model('Post',postSchema)

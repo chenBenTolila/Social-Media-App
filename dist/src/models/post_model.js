@@ -11,7 +11,11 @@ const postSchema = new mongoose_1.default.Schema({
     sender: {
         type: String,
         required: true
-    }
+    },
+    imageUrl: {
+        type: String,
+        required: true
+    },
 });
 module.exports = mongoose_1.default.model('Post', postSchema);
 //# sourceMappingURL=post_model.js.map

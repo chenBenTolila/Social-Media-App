@@ -69,29 +69,39 @@ async function generateTokens(userId:string){
 }
 
 const login = async (req:Request, res:Response)=>{
-    console.log('login')
+    console.log('login in backend')
     const email = req.body.email
     const password = req.body.password
     if (email == null || password == null) {
+        console.log('credentials are empty')
         return sendError(res, "please provide valid email and password")
     }
+    console.log('credentials are not empty')
 
     try {
         const user = await User.findOne({'email': email})
-        if(user == null) return sendError(res, "incorrect user or password")
+        if(user == null) {
+            console.log('user is null')
+            return sendError(res, "incorrect user or password")
+        }
         
         const match = await bcrypt.compare(password, user.password)
-        if(!match) return sendError(res, "incorrect user or password")
+        if(!match) {
+            console.log('not matching')
+            return sendError(res, "incorrect user or password")
+        }
 
         const tokens = await generateTokens(user._id.toString())
        
-
+        console.log('generated tokens')
         if (user.refresh_tokens == null) user.refresh_tokens = [tokens.refreshToken]
         else user.refresh_tokens.push(tokens.refreshToken)
         await user.save()
 
+        console.log(tokens)
+
         // check if the return is really needed
-        return res.status(200).send(tokens)    
+        return res.status(200).send({'tokens':tokens, 'userId':user._id})    
     } catch(err){
         console.log("error: " + err)
         return sendError(res, "failed checking user")
