@@ -43,9 +43,14 @@ const getPostById = (req) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 const addNewPost = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("in add new post");
+    console.log("message: " + req.body["message"]);
+    console.log("sender: " + req.body["sender"]);
+    console.log("image: " + req.body["image"]);
     const post = new post_model_1.default({
         message: req.body["message"],
-        sender: req.body["sender"]
+        sender: req.body["sender"],
+        imageUrl: req.body["image"]
     });
     try {
         const newPost = yield post.save();

@@ -35,10 +35,14 @@ const getPostById = async (req:request)=>{
 }
 
 const addNewPost = async (req: request)=>{
-
+    console.log("in add new post")
+    console.log("message: " + req.body["message"])
+    console.log("sender: " + req.body["sender"])
+    console.log("image: " + req.body["image"])
     const post = new Post({
         message: req.body["message"],
-        sender: req.body["sender"]  
+        sender: req.body["sender"],
+        imageUrl: req.body["image"]
     })
 
     try{
