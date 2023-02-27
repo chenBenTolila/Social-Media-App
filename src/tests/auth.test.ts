@@ -20,7 +20,6 @@ afterAll(async ()=>{
     mongoose.connection.close()
 })
 
-
 describe("Auth Tests", ()=>{
 
     test("Not authorized attempt test",async ()=>{

@@ -27,7 +27,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const avatarUrl = req.body.image;
     console.log("url: " + avatarUrl);
     //check if credentials are valid
-    if (email == null || password == null || name == null) {
+    if (email == null || password == null || name == null || avatarUrl == null) {
         console.log('empty credentials');
         return sendError(res, "please provide valid email and password");
     }
@@ -50,6 +50,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log('saving new user');
         yield newUser.save();
         // TODO: fix the return value - need to change the return value to email instead of id
+        console.log("success in saving");
         return res.status(200).send({
             'email': email,
             '_id': newUser._id,
@@ -156,7 +157,38 @@ const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return sendError(res, 'failed validating token');
     }
 });
+const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(req.params.id);
+    try {
+        const user = yield user_model_1.default.findById(req.params.id);
+        res.status(200).send(user);
+    }
+    catch (err) {
+        res.status(400).send({ 'error': "fail to get user from db" });
+    }
+});
+const putUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("in putUserById");
+    console.log(req.params.id);
+    console.log(req.body.password);
+    if (req.body.password != undefined) {
+        const salt = yield bcrypt_1.default.genSalt(10);
+        req.body.password = yield bcrypt_1.default.hash(req.body.password, salt);
+    }
+    try {
+        const user = yield user_model_1.default.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+        });
+        console.log("save post in db");
+        res.status(200).send(user);
+    }
+    catch (err) {
+        console.log("fail to update post in db");
+        res.status(400).send({ error: "fail to update post in db" });
+    }
+});
 const authenticateMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("in authenticate middleware");
     const token = getTokenFromRequest(req);
     if (token == null)
         return sendError(res, 'authentication missing');
@@ -167,8 +199,11 @@ const authenticateMiddleware = (req, res, next) => __awaiter(void 0, void 0, voi
         return next();
     }
     catch (err) {
-        return sendError(res, 'failed validating token');
+        console.log("invalid token need to return 100 status");
+        return res.status(410).send({
+            'err': 'failed validating token'
+        });
     }
 });
-module.exports = { login, register, logout, refresh, authenticateMiddleware };
+module.exports = { login, register, logout, refresh, authenticateMiddleware, getUserById, putUserById };
 //# sourceMappingURL=auth.js.map

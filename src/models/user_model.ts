@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     },
     imageUrl: {
         type: String,
-        required: true
+        //required: true
     },
     refresh_tokens: {
         type: [String]

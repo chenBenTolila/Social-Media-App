@@ -140,5 +140,62 @@ router.get('/logout', auth_js_1.default.logout);
  *
  */
 router.get('/refresh', auth_js_1.default.refresh);
+/**
+ * @swagger
+ * /post/{id}:
+ *   get:
+ *     summary: get user by id
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         requiered: true
+ *         schema:
+ *           type: string
+ *           description: the requested user id
+ *     responses:
+ *       200:
+ *         description: the requested post
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Post'
+ *
+ */
+router.get('/:id', auth_js_1.default.authenticateMiddleware, auth_js_1.default.getUserById);
+// TODO - need to add test for getUserById in the auth.test.ts
+/**
+ * @swagger
+ * /post/{id}:
+ *   put:
+ *     summary: update existing post by id
+ *     tags: [Post]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         requiered: true
+ *         schema:
+ *           type: string
+ *           description: the updated post id
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Post'
+ *     responses:
+ *       200:
+ *         description: the requested post
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Post'
+ *
+ */
+router.put("/:id", auth_js_1.default.authenticateMiddleware, auth_js_1.default.putUserById);
 module.exports = router;
 //# sourceMappingURL=auth_route.js.map

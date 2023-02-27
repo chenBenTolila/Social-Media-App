@@ -40,7 +40,7 @@ const router = express_1.default.Router();
  * @swagger
  * /student:
  *   get:
- *     summary: get list of post from server
+ *     summary: get list of students from server
  *     tags: [Student]
  *     responses:
  *       200:
@@ -83,7 +83,7 @@ router.get('/:id', student_1.default.getStudentById);
  * @swagger
  * /student:
  *   post:
- *     summary: add a new post
+ *     summary: add a new student
  *     tags: [Student]
  *     requestBody:
  *       required: true

@@ -9,6 +9,7 @@ function sendError(res:Response, error:String) {
     })
 }
 
+
 const register = async (req:Request, res:Response)=>{
     console.log('register in backend')
 
@@ -19,7 +20,7 @@ const register = async (req:Request, res:Response)=>{
     console.log("url: " + avatarUrl)
 
     //check if credentials are valid
-    if (email == null || password == null || name == null) {
+    if (email == null || password == null || name == null || avatarUrl == null) {
         console.log('empty credentials')
         return sendError(res, "please provide valid email and password")
     }
@@ -44,6 +45,7 @@ const register = async (req:Request, res:Response)=>{
         console.log('saving new user')
         await newUser.save()
         // TODO: fix the return value - need to change the return value to email instead of id
+        console.log("success in saving")
         return res.status(200).send({
             'email' : email,
             '_id' : newUser._id,
@@ -172,8 +174,40 @@ const logout = async (req:Request, res:Response)=>{
     }
 }
 
+const getUserById = async (req: Request, res: Response) => {
+    console.log(req.params.id)
+    try {
+        const user = await User.findById(req.params.id)
+        res.status(200).send(user)
+    } catch (err) {
+        res.status(400).send({ 'error': "fail to get user from db" })
+    }
+}
+
+const putUserById = async (req: Request, res: Response) => {
+    console.log("in putUserById");
+    console.log(req.params.id);
+    console.log(req.body.password);
+    if (req.body.password != undefined) {
+        const salt = await bcrypt.genSalt(10);
+        req.body.password = await bcrypt.hash(req.body.password, salt);
+    }
+
+    try {
+        const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+        });
+        console.log("save post in db");
+        res.status(200).send(user);
+    } catch (err) {
+        console.log("fail to update post in db");
+        res.status(400).send({ error: "fail to update post in db" });
+    }
+};
+
 
 const authenticateMiddleware = async (req:Request, res:Response, next:NextFunction)=>{
+    console.log("in authenticate middleware")
     const token = getTokenFromRequest(req)
     if(token == null) return sendError(res,'authentication missing')
 
@@ -183,11 +217,14 @@ const authenticateMiddleware = async (req:Request, res:Response, next:NextFuncti
         console.log("token user: " + user)
         return next()
     }catch(err) {
-        return sendError(res,'failed validating token')
+        console.log("invalid token need to return 100 status")
+        return res.status(410).send({
+            'err': 'failed validating token'
+        }) 
     }
 }
 
-export = {login, register, logout, refresh, authenticateMiddleware}
+export = {login, register, logout, refresh, authenticateMiddleware, getUserById, putUserById}
 
 
 
