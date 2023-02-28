@@ -55,6 +55,9 @@ const addNewPost = (req) => __awaiter(void 0, void 0, void 0, function* () {
         sender: req.body["sender"],
         imageUrl: req.body["image"]
     });
+    if (post.imageUrl == "") {
+        console.log("image string emptyyyyyyyy");
+    }
     try {
         const newPost = yield post.save();
         console.log("save post in db");

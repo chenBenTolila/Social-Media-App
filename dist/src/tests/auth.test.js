@@ -51,8 +51,8 @@ describe("Auth Tests", () => {
             "password": userPassword + '4'
         });
         expect(response.statusCode).not.toEqual(200);
-        const access = response.body.accesstoken;
-        expect(access).toBeUndefined();
+        const tokens = response.body.tokens;
+        expect(tokens).toBeUndefined();
     }));
     test("Login test", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).post('/auth/login').send({
@@ -97,6 +97,6 @@ describe("Auth Tests", () => {
     }));
 });
 // TODO:
-// need to add more tests - like test that tries using the old refresh token.
+// TODO - need to add more tests - like test that tries using the old refresh token.
 // and test that tries to use the new refresh token afterwards
 //# sourceMappingURL=auth.test.js.map

@@ -7,22 +7,30 @@ import User from '../models/user_model'
 const firstPostMessage = 'This is the first new test post message'
 const secondPostMessage = 'This is the second new test post message'
 
+const firstPostImageUrl = 'imageUrl'
+
+
 let firstPostSender = ''
 let firstPostId = ''
 const newPostMessageUpdated = 'This is the updated first post message'
 
 const userEmail = "user1@gmail.com"
 const userPassword = "12345"
+const userName = "user1"
 let accessToken = ''
 
 beforeAll(async ()=>{
     await Post.remove()
     await User.remove()
     const res = await request(app).post('/auth/register').send({
-        "email": userEmail,
-        "password": userPassword 
+        "_email": userEmail,
+        "password": userPassword,
+        "name": userName,
+        "image": "",
     })
     firstPostSender = res.body._id
+    console.log("testing register:::")
+    console.log(res.body._id)
 })
 
 async function loginUser() {
@@ -30,7 +38,7 @@ async function loginUser() {
         "email": userEmail,
         "password": userPassword 
     })
-    accessToken = response.body.accessToken
+    accessToken = response.body.tokens.accessToken
 }
 
 beforeEach(async ()=>{
@@ -49,7 +57,8 @@ describe("Posts Tests", ()=>{
     test("add new post", async ()=>{
         const response = await request(app).post('/post').set('Authorization', 'JWT ' + accessToken).send({
             "message": firstPostMessage,
-            "sender": firstPostSender
+            "sender": firstPostSender,
+            "image": firstPostImageUrl,
         })
         expect(response.statusCode).toEqual(200)
         expect(response.body.post.message).toEqual(firstPostMessage)
@@ -60,7 +69,8 @@ describe("Posts Tests", ()=>{
     test("add second new post", async ()=>{
         const response = await request(app).post('/post').set('Authorization', 'JWT ' + accessToken).send({
             "message": secondPostMessage,
-            "sender": firstPostSender
+            "sender": firstPostSender,
+            "image": firstPostImageUrl,
         })
         expect(response.statusCode).toEqual(200)
         expect(response.body.post.message).toEqual(secondPostMessage)
@@ -74,6 +84,7 @@ describe("Posts Tests", ()=>{
         expect(response.statusCode).toEqual(200);
         expect(response.body.post[0].message).toEqual(firstPostMessage);
         expect(response.body.post[0].sender).toEqual(firstPostSender);
+        expect(response.body.post[0].imageUrl).toEqual(firstPostImageUrl);
         expect(response.body.post.length).toEqual(2);
     })
 
@@ -83,6 +94,7 @@ describe("Posts Tests", ()=>{
         expect(response.statusCode).toEqual(200)
         expect(response.body.post.message).toEqual(firstPostMessage)
         expect(response.body.post.sender).toEqual(firstPostSender)
+        expect(response.body.post.imageUrl).toEqual(firstPostImageUrl)
     })
 
     test("get post by wrong id fails",async ()=>{
@@ -98,6 +110,7 @@ describe("Posts Tests", ()=>{
         console.log(response.body);
         expect(response.body.post[0].message).toEqual(firstPostMessage);
         expect(response.body.post[0].sender).toEqual(firstPostSender);
+        expect(response.body.post[0].imageUrl).toEqual(firstPostImageUrl);
         expect(response.body.post.length).toEqual(2);
     })
 
@@ -118,11 +131,13 @@ describe("Posts Tests", ()=>{
         expect(response.statusCode).toEqual(200)
         expect(response.body.post.message).toEqual(newPostMessageUpdated)
         expect(response.body.post.sender).toEqual(firstPostSender)
+        expect(response.body.post.imageUrl).toEqual(firstPostImageUrl)
 
         response = await request(app).get('/post/' + firstPostId).set('Authorization', 'JWT ' + accessToken)
         expect(response.statusCode).toEqual(200)
         expect(response.body.post.message).toEqual(newPostMessageUpdated)
         expect(response.body.post.sender).toEqual(firstPostSender)
+        expect(response.body.post.imageUrl).toEqual(firstPostImageUrl)
 
         response = await request(app).put('/post/12345').set('Authorization', 'JWT ' + accessToken).send({
             "message": newPostMessageUpdated,
@@ -136,6 +151,7 @@ describe("Posts Tests", ()=>{
         expect(response.statusCode).toEqual(200)
         expect(response.body.post.message).toEqual(newPostMessageUpdated)
         expect(response.body.post.sender).toEqual(firstPostSender)
+        expect(response.body.post.imageUrl).toEqual(firstPostImageUrl)
     })
 
 })

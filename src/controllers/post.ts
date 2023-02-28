@@ -48,6 +48,9 @@ const addNewPost = async (req: request)=>{
         imageUrl: req.body["image"]
     })
 
+    if(post.imageUrl == "") {
+        console.log("image string emptyyyyyyyy")
+    }
     try{
         const newPost = await post.save()
         console.log("save post in db")

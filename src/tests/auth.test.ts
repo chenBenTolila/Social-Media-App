@@ -44,8 +44,8 @@ describe("Auth Tests", ()=>{
             "password": userPassword + '4'
         })
         expect(response.statusCode).not.toEqual(200)
-        const access = response.body.accesstoken
-        expect(access).toBeUndefined()
+        const tokens = response.body.tokens
+        expect(tokens).toBeUndefined()
     })
 
     test("Login test", async ()=>{
