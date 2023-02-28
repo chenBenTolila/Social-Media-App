@@ -9,6 +9,9 @@ const getAllPosts = async (req:request) => {
     console.log("new version of get all posts")
     try {
         let posts = {}
+        console.log("getAllPosts")
+        console.log("req")
+        console.log(req)
         if (req.query != null && req.query.sender != null) {
             posts = await Post.find({ sender: req.query.sender })
         } else {
@@ -57,6 +60,8 @@ const addNewPost = async (req: request)=>{
 
 const putPostById = async (req:request)=>{
     try{
+        console.log("putPostById")
+        console.log(req)
         const post = await Post.findByIdAndUpdate(req.params.id, req.body, {new: true})
         return new response(post, req.userId, null)
     }catch (err){

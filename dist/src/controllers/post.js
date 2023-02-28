@@ -18,6 +18,9 @@ const getAllPosts = (req) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("new version of get all posts");
     try {
         let posts = {};
+        console.log("getAllPosts");
+        console.log("req");
+        console.log(req);
         if (req.query != null && req.query.sender != null) {
             posts = yield post_model_1.default.find({ sender: req.query.sender });
         }
@@ -64,6 +67,8 @@ const addNewPost = (req) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const putPostById = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log("putPostById");
+        console.log(req);
         const post = yield post_model_1.default.findByIdAndUpdate(req.params.id, req.body, { new: true });
         return new response_1.default(post, req.userId, null);
     }
