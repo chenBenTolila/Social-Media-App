@@ -18,14 +18,14 @@ module.exports = (io, socket) => {
     //   'message' : message to send}
     const sendMessage = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         console.log('chat:send_message');
-        const to = payload.to;
         const message = payload.message;
         const from = socket.data.user;
         try {
             const response = yield message_1.default.addNewMessage(new request_1.default(payload, from, null, null));
-            io.to(to).emit("chat:message", { 'to': to, 'from': from, 'message': message, res: response });
+            io.emit("chat:message", { from: from, message: message, res: response });
         }
         catch (err) {
+            console.log("failed to send message: " + err);
             socket.emit("chat:message", { status: "fail" });
         }
     });

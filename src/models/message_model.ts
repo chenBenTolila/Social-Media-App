@@ -1,7 +1,8 @@
 import mongoose from 'mongoose'
 
 const postSchema = new mongoose.Schema({
-    body: {
+    // TODO: test if I need to change bode to message
+    message: {
         type: String,
         required: true,
     },
@@ -9,10 +10,6 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    reciever: {
-        type: String,
-        required: true
-    }
 })
 
 export = mongoose.model('Message',postSchema)

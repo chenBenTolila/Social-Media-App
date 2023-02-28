@@ -12,7 +12,6 @@ export = (io:Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
 
     const sendMessage = async (payload) => {
         console.log('chat:send_message')
-        const to = payload.to
         const message = payload.message
         const from = socket.data.user
 
@@ -20,8 +19,9 @@ export = (io:Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
             const response = await messageController.addNewMessage(
                 new request(payload, from, null, null)
             )
-            io.to(to).emit("chat:message",{'to':to, 'from': from, 'message':message, res: response})
+            io.emit("chat:message",{from: from, message: message, res: response})
         } catch (err) {
+            console.log("failed to send message: " + err)
             socket.emit("chat:message", { status: "fail" })
         }
     }
@@ -40,7 +40,6 @@ export = (io:Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
             socket.emit("chat:get_all.response", { status: "fail" })
         }
     }
-
 
     console.log('register chat handlers')
     socket.on("chat:send_message", sendMessage)

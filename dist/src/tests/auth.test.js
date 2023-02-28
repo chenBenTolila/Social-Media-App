@@ -19,6 +19,7 @@ const post_model_1 = __importDefault(require("../models/post_model"));
 const user_model_1 = __importDefault(require("../models/user_model"));
 const userEmail = "user1@gmail.com";
 const userPassword = "12345";
+const userName = "user";
 let accessToken = '';
 let refreshToken = '';
 beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
@@ -37,8 +38,10 @@ describe("Auth Tests", () => {
     }));
     test("Register test", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).post('/auth/register').send({
-            "email": userEmail,
-            "password": userPassword
+            "_email": userEmail,
+            "password": userPassword,
+            "name": userName,
+            "image": "",
         });
         expect(response.statusCode).toEqual(200);
     }));
@@ -57,13 +60,15 @@ describe("Auth Tests", () => {
             "password": userPassword
         });
         expect(response.statusCode).toEqual(200);
-        accessToken = response.body.accessToken;
+        accessToken = response.body.tokens.accessToken;
         expect(accessToken).not.toBeNull();
-        refreshToken = response.body.refreshToken;
+        refreshToken = response.body.tokens.refreshToken;
         expect(accessToken).not.toBeNull();
     }));
-    test("Test using valid access token", () => __awaiter(void 0, void 0, void 0, function* () {
-        const response = yield (0, supertest_1.default)(server_1.default).get('/post').set('Authorization', 'JWT ' + accessToken);
+    test("login using valid access token ", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, supertest_1.default)(server_1.default)
+            .get("/post")
+            .set("Authorization", "JWT " + accessToken);
         expect(response.statusCode).toEqual(200);
     }));
     test("Test using wrong access token", () => __awaiter(void 0, void 0, void 0, function* () {

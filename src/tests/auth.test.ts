@@ -6,6 +6,7 @@ import User from '../models/user_model'
 
 const userEmail = "user1@gmail.com"
 const userPassword = "12345"
+const userName = "user"
 let accessToken = ''
 let refreshToken = ''
  
@@ -29,8 +30,10 @@ describe("Auth Tests", ()=>{
 
     test("Register test",async ()=>{
         const response = await request(app).post('/auth/register').send({
-            "email": userEmail,
-            "password": userPassword
+            "_email": userEmail,
+            "password": userPassword,
+            "name": userName,
+            "image": "",
         })
         expect(response.statusCode).toEqual(200)
     })
@@ -46,21 +49,23 @@ describe("Auth Tests", ()=>{
     })
 
     test("Login test", async ()=>{
-        const response = await request(app).post('/auth/login').send({
+        const response: any = await request(app).post('/auth/login').send({
             "email": userEmail,
             "password": userPassword
         })
         expect(response.statusCode).toEqual(200)
-        accessToken = response.body.accessToken
+        accessToken = response.body.tokens.accessToken
         expect(accessToken).not.toBeNull()
-        refreshToken = response.body.refreshToken
+        refreshToken = response.body.tokens.refreshToken
         expect(accessToken).not.toBeNull()
     })
 
-    test("Test using valid access token", async ()=>{
-        const response = await request(app).get('/post').set('Authorization', 'JWT ' + accessToken)
-        expect(response.statusCode).toEqual(200)
-    })
+    test("login using valid access token ", async () => {
+        const response = await request(app)
+            .get("/post")
+            .set("Authorization", "JWT " + accessToken);
+        expect(response.statusCode).toEqual(200);
+    });
 
     test("Test using wrong access token", async ()=>{
         const response = await request(app).get('/post').set('Authorization', 'JWT 1' + accessToken)
@@ -94,5 +99,5 @@ describe("Auth Tests", ()=>{
 })
 
 // TODO:
-// need to add more tests - like test that tries using the old refresh token.
+// TODO - need to add more tests - like test that tries using the old refresh token.
 // and test that tries to use the new refresh token afterwards

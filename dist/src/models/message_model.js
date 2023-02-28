@@ -4,7 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const mongoose_1 = __importDefault(require("mongoose"));
 const postSchema = new mongoose_1.default.Schema({
-    body: {
+    // TODO: test if I need to change bode to message
+    message: {
         type: String,
         required: true,
     },
@@ -12,10 +13,6 @@ const postSchema = new mongoose_1.default.Schema({
         type: String,
         required: true
     },
-    reciever: {
-        type: String,
-        required: true
-    }
 });
 module.exports = mongoose_1.default.model('Message', postSchema);
 //# sourceMappingURL=message_model.js.map

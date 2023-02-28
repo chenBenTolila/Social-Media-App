@@ -70,5 +70,19 @@ const putPostById = async (req:request)=>{
     }
 }
 
-export = {getAllPosts, addNewPost, getPostById, putPostById}
+const deletePostById = async (req: request) => {
+    console.log(req.params.id);
+    try {
+        await Post.findByIdAndDelete(req.params.id);
+        console.log("delete post from db");
+        return new response(null, req.userId, null);
+    } catch (err) {
+        console.log("fail to delete post");
+        console.log(err);
+        return new response(null, req.userId, new error(400, err.message));
+    }
+};
+
+
+export = {getAllPosts, addNewPost, getPostById, putPostById, deletePostById}
 
