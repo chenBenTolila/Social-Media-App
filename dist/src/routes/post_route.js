@@ -31,6 +31,7 @@ const request_1 = __importDefault(require("../request"));
 *       required:
 *         - message
 *         - sender
+*         - imageUrl
 *       properties:
 *         message:
 *           type: string
@@ -38,9 +39,14 @@ const request_1 = __importDefault(require("../request"));
 *         sender:
 *           type: string
 *           description: The sending user id
+*         imageUrl:
+*           type: string
+*           description: The post's image url
+
 *       example:
 *         message: 'this is my new post'
 *         sender: '12342345234556'
+*         imageUrl: ''
 */
 /**
  * @swagger

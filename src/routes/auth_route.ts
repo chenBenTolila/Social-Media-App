@@ -28,6 +28,8 @@ import auth from '../controllers/auth.js'
 *       required:
 *         - email
 *         - password
+*         - imageUrl
+*         - name
 *       properties:
 *         email:
 *           type: string
@@ -35,9 +37,17 @@ import auth from '../controllers/auth.js'
 *         password:
 *           type: string
 *           description: The user password
+*         name:
+*           type: string
+*           description: The user name
+*         image:
+*           type: string
+*           description: The user's profile picture url
 *       example:
 *         email: 'bob@gmail.com'
 *         password: '123456'
+*         name: 'Bob'
+*         image: ''
 */
 
 
