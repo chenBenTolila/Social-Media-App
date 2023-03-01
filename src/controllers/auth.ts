@@ -9,7 +9,6 @@ function sendError(res:Response, error:String) {
     })
 }
 
-
 const register = async (req:Request, res:Response)=>{
     console.log('register in backend')
 

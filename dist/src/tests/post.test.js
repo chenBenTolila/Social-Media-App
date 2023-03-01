@@ -146,6 +146,13 @@ describe("Posts Tests", () => {
         expect(response.body.post.sender).toEqual(firstPostSender);
         expect(response.body.post.imageUrl).toEqual(firstPostImageUrl);
     }));
+    test("delete post by id", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, supertest_1.default)(server_1.default)
+            .delete("/post/" + firstPostId)
+            .set("Authorization", "JWT " + accessToken);
+        console.log(response.body);
+        expect(response.statusCode).toEqual(200);
+    }));
 });
 // newPostId
 // get post by id -> יצירת פוסט שמירת ID ואז קריאת הפוסט

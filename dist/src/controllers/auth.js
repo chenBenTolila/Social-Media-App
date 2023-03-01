@@ -136,7 +136,6 @@ const refresh = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("logout func");
     const refreshToken = getTokenFromRequest(req);
     if (refreshToken == null)
         return sendError(res, 'authentication missing');

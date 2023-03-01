@@ -256,12 +256,12 @@ describe("my awesome project", () => {
         //to: client2.id,
         });
     });
-    test("test chat get all messages that send by user", (done) => {
+    test("test chat get all messages that were send by user", (done) => {
         client1.socket.once("chat:get_all.response", (args) => {
             expect(args.body.length).toBe(1);
             console.log("response in tests: " + args);
             //expect(args[0].body[0].reciever).toBe(client2.id)
-            expect(args.body[0].body).toBe(message);
+            expect(args.body[0].message).toBe(message);
             expect(args.body[0].sender).toBe(client1.id);
             expect(args.status).toBe("ok");
             done();

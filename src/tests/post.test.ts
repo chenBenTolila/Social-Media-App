@@ -154,10 +154,13 @@ describe("Posts Tests", ()=>{
         expect(response.body.post.imageUrl).toEqual(firstPostImageUrl)
     })
 
+    test("delete post by id", async () => {
+        const response = await request(app)
+            .delete("/post/" + firstPostId)
+            .set("Authorization", "JWT " + accessToken);
+        console.log(response.body);
+        expect(response.statusCode).toEqual(200);
+    });
 })
 
-// newPostId
-// get post by id -> יצירת פוסט שמירת ID ואז קריאת הפוסט
-// get post by sender
-// add api for update post using PUT
 
