@@ -3,6 +3,8 @@ import app from '../server'
 import mongoose from 'mongoose'
 import Post from '../models/post_model'
 import User from '../models/user_model'
+import Message from "../models/message_model"
+
 
 const firstPostMessage = 'This is the first new test post message'
 const secondPostMessage = 'This is the second new test post message'
@@ -22,6 +24,7 @@ let accessToken = ''
 beforeAll(async ()=>{
     await Post.remove()
     await User.remove()
+    await Message.remove()
     const res = await request(app).post('/auth/register').send({
         "_email": userEmail,
         "password": userPassword,
@@ -48,6 +51,7 @@ beforeEach(async ()=>{
 afterAll(async ()=>{
     await Post.remove()
     await User.remove()
+    await Message.remove()
     mongoose.connection.close()
 })
 

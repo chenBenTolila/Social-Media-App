@@ -17,18 +17,23 @@ const server_1 = __importDefault(require("../server"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const post_model_1 = __importDefault(require("../models/post_model"));
 const user_model_1 = __importDefault(require("../models/user_model"));
+const message_model_1 = __importDefault(require("../models/message_model"));
+let userId = "";
 const userEmail = "user1@gmail.com";
 const userPassword = "12345";
 const userName = "user";
+const newUserName = "user1";
 let accessToken = '';
 let refreshToken = '';
 beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
     yield post_model_1.default.remove();
     yield user_model_1.default.remove();
+    yield message_model_1.default.remove();
 }));
 afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
     yield post_model_1.default.remove();
     yield user_model_1.default.remove();
+    yield message_model_1.default.remove();
     mongoose_1.default.connection.close();
 }));
 describe("Auth Tests", () => {
@@ -44,6 +49,7 @@ describe("Auth Tests", () => {
             "image": "",
         });
         expect(response.statusCode).toEqual(200);
+        userId = response.body._id;
     }));
     test("Login test wrong password", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).post('/auth/login').send({
@@ -91,12 +97,42 @@ describe("Auth Tests", () => {
         response = yield (0, supertest_1.default)(server_1.default).get('/post').set('Authorization', 'JWT ' + accessToken);
         expect(response.statusCode).toEqual(200);
     }));
+    test("get user by id", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, supertest_1.default)(server_1.default)
+            .get("/auth/" + userId)
+            .set("Authorization", "JWT " + accessToken);
+        expect(response.statusCode).toEqual(200);
+        console.log(response.body);
+        expect(response.body._id).toEqual(userId);
+        expect(response.body.name).toEqual(userName);
+    }));
+    test("update user by Id", () => __awaiter(void 0, void 0, void 0, function* () {
+        let response = yield (0, supertest_1.default)(server_1.default)
+            .put("/auth/" + userId)
+            .set("Authorization", "JWT " + accessToken)
+            .send({
+            name: newUserName,
+        });
+        expect(response.statusCode).toEqual(200);
+        expect(response.body.name).toEqual(newUserName);
+        expect(response.body._id).toEqual(userId);
+        response = yield (0, supertest_1.default)(server_1.default)
+            .get("/auth/" + userId)
+            .set("Authorization", "JWT " + accessToken);
+        expect(response.statusCode).toEqual(200);
+        expect(response.body.name).toEqual(newUserName);
+        expect(response.body._id).toEqual(userId);
+        response = yield (0, supertest_1.default)(server_1.default)
+            .put("/auth/12345")
+            .set("Authorization", "JWT " + accessToken)
+            .send({
+            name: newUserName,
+        });
+        expect(response.statusCode).toEqual(400);
+    }));
     test("Logout test", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).get('/auth/logout').set('Authorization', 'JWT ' + refreshToken);
         expect(response.statusCode).toEqual(200);
     }));
 });
-// TODO:
-// TODO - need to add more tests - like test that tries using the old refresh token.
-// and test that tries to use the new refresh token afterwards
 //# sourceMappingURL=auth.test.js.map

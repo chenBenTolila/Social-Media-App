@@ -17,6 +17,7 @@ const server_1 = __importDefault(require("../server"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const post_model_1 = __importDefault(require("../models/post_model"));
 const user_model_1 = __importDefault(require("../models/user_model"));
+const message_model_1 = __importDefault(require("../models/message_model"));
 const firstPostMessage = 'This is the first new test post message';
 const secondPostMessage = 'This is the second new test post message';
 const firstPostImageUrl = 'imageUrl';
@@ -30,6 +31,7 @@ let accessToken = '';
 beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
     yield post_model_1.default.remove();
     yield user_model_1.default.remove();
+    yield message_model_1.default.remove();
     const res = yield (0, supertest_1.default)(server_1.default).post('/auth/register').send({
         "_email": userEmail,
         "password": userPassword,
@@ -55,6 +57,7 @@ beforeEach(() => __awaiter(void 0, void 0, void 0, function* () {
 afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
     yield post_model_1.default.remove();
     yield user_model_1.default.remove();
+    yield message_model_1.default.remove();
     mongoose_1.default.connection.close();
 }));
 describe("Posts Tests", () => {

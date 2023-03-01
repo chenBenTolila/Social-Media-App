@@ -3,21 +3,28 @@ import app from '../server'
 import mongoose from 'mongoose'
 import Post from '../models/post_model'
 import User from '../models/user_model'
+import Message from "../models/message_model"
+
+let userId = ""
 
 const userEmail = "user1@gmail.com"
 const userPassword = "12345"
 const userName = "user"
+const newUserName = "user1"
+
 let accessToken = ''
 let refreshToken = ''
  
 beforeAll(async ()=>{
     await Post.remove()
     await User.remove()
+    await Message.remove()
 })
 
 afterAll(async ()=>{
     await Post.remove()
     await User.remove()
+    await Message.remove()
     mongoose.connection.close()
 })
 
@@ -36,6 +43,7 @@ describe("Auth Tests", ()=>{
             "image": "",
         })
         expect(response.statusCode).toEqual(200)
+        userId = response.body._id
     })
 
     test("Login test wrong password", async ()=>{
@@ -92,7 +100,43 @@ describe("Auth Tests", ()=>{
         expect(response.statusCode).toEqual(200)
     })
 
-    
+
+    test("get user by id", async () => {
+        const response = await request(app)
+            .get("/auth/" + userId)
+            .set("Authorization", "JWT " + accessToken);
+        expect(response.statusCode).toEqual(200);
+        console.log(response.body);
+        expect(response.body._id).toEqual(userId);
+        expect(response.body.name).toEqual(userName);
+    });
+
+    test("update user by Id", async () => {
+        let response = await request(app)
+            .put("/auth/" + userId)
+            .set("Authorization", "JWT " + accessToken)
+            .send({
+                name: newUserName,
+            });
+        expect(response.statusCode).toEqual(200);
+        expect(response.body.name).toEqual(newUserName);
+        expect(response.body._id).toEqual(userId);
+
+        response = await request(app)
+            .get("/auth/" + userId)
+            .set("Authorization", "JWT " + accessToken);
+        expect(response.statusCode).toEqual(200);
+        expect(response.body.name).toEqual(newUserName);
+        expect(response.body._id).toEqual(userId);
+
+        response = await request(app)
+            .put("/auth/12345")
+            .set("Authorization", "JWT " + accessToken)
+            .send({
+                name: newUserName,
+            });
+        expect(response.statusCode).toEqual(400);
+    });
 
     test("Logout test", async ()=>{
         const response = await request(app).get('/auth/logout').set('Authorization', 'JWT ' + refreshToken)
@@ -100,6 +144,3 @@ describe("Auth Tests", ()=>{
     })
 })
 
-// TODO:
-// TODO - need to add more tests - like test that tries using the old refresh token.
-// and test that tries to use the new refresh token afterwards
