@@ -154,8 +154,4 @@ describe("Posts Tests", () => {
         expect(response.statusCode).toEqual(200);
     }));
 });
-// newPostId
-// get post by id -> יצירת פוסט שמירת ID ואז קריאת הפוסט
-// get post by sender
-// add api for update post using PUT
 //# sourceMappingURL=post.test.js.map
