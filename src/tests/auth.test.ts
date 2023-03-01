@@ -92,6 +92,8 @@ describe("Auth Tests", ()=>{
         expect(response.statusCode).toEqual(200)
     })
 
+    
+
     test("Logout test", async ()=>{
         const response = await request(app).get('/auth/logout').set('Authorization', 'JWT ' + refreshToken)
         expect(response.statusCode).toEqual(200)
