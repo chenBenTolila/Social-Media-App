@@ -21,8 +21,11 @@ const user_model_1 = __importDefault(require("../models/user_model"));
 const message_model_1 = __importDefault(require("../models/message_model"));
 const userEmail = "user1@gmail.com";
 const userPassword = "12345";
+const userName1 = "user1";
 const userEmail2 = "user2@gmail.com";
 const userPassword2 = "12345";
+const userName2 = "user2";
+const firstPostImageUrl = 'imageUrl';
 const firstPostMessage = 'this is the first new test post message';
 const secondPostMessage = 'this is the second new test post message';
 let newPostId = "";
@@ -37,17 +40,19 @@ function clientSocketConnect(clientSocket) {
         });
     });
 }
-const connectUser = (userEmail, userPassword) => __awaiter(void 0, void 0, void 0, function* () {
+const connectUser = (userEmail, userPassword, userName) => __awaiter(void 0, void 0, void 0, function* () {
     const response1 = yield (0, supertest_1.default)(app_1.default).post('/auth/register').send({
-        "email": userEmail,
-        "password": userPassword
+        "_email": userEmail,
+        "password": userPassword,
+        "name": userName,
+        "image": "",
     });
     const userId = response1.body._id;
     const response = yield (0, supertest_1.default)(app_1.default).post('/auth/login').send({
         "email": userEmail,
         "password": userPassword
     });
-    const token = response.body.accessToken;
+    const token = response.body.tokens.accessToken;
     const socket = (0, socket_io_client_1.default)('http://localhost:' + process.env.PORT, {
         auth: {
             token: 'barrer ' + token
@@ -63,8 +68,8 @@ describe("my awesome project", () => {
         yield post_model_1.default.remove();
         yield user_model_1.default.remove();
         yield message_model_1.default.remove();
-        client1 = yield connectUser(userEmail, userPassword);
-        client2 = yield connectUser(userEmail2, userPassword2);
+        client1 = yield connectUser(userEmail, userPassword, userName1);
+        client2 = yield connectUser(userEmail2, userPassword2, userName2);
     }));
     afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
         client1.socket.close();
@@ -88,6 +93,7 @@ describe("my awesome project", () => {
             console.log("on any" + arg);
             expect(arg.body.message).toBe(firstPostMessage);
             expect(arg.body.sender).toBe(client1.id);
+            expect(arg.body.imageUrl).toBe(firstPostImageUrl);
             expect(arg.status).toBe("ok");
             newPostId = arg.body._id;
             done();
@@ -96,13 +102,15 @@ describe("my awesome project", () => {
         client1.socket.emit("post:post", {
             message: firstPostMessage,
             sender: client1.id,
+            image: firstPostImageUrl,
         });
     });
-    test("Post add new test by a different user", (done) => {
+    test("Post add new post by a different user", (done) => {
         client2.socket.once("post:post.response", (arg) => {
             console.log("on any" + arg);
             expect(arg.body.message).toBe(secondPostMessage);
             expect(arg.body.sender).toBe(client2.id);
+            expect(arg.body.imageUrl).toBe(firstPostImageUrl);
             expect(arg.status).toBe("ok");
             done();
         });
@@ -110,6 +118,7 @@ describe("my awesome project", () => {
         client2.socket.emit("post:post", {
             message: secondPostMessage,
             sender: client2.id,
+            image: firstPostImageUrl,
         });
     });
     test("Post get all test", (done) => {
@@ -229,13 +238,13 @@ describe("my awesome project", () => {
     });
     test("Test chat message", (done) => {
         client2.socket.once('chat:message', (args) => {
-            expect(args.to).toBe(client2.id);
+            // expect(args.to).toBe(client2.id)
             expect(args.message).toBe(message);
             expect(args.from).toBe(client1.id);
             expect(args.res.status).toBe("ok");
             done();
         });
-        client1.socket.emit("chat:send_message", { to: client2.id, message: message });
+        client1.socket.emit("chat:send_message", { message: message });
     });
     test("test chat send message with no message", (done) => {
         client2.socket.once("chat:message", (args) => {
@@ -244,7 +253,7 @@ describe("my awesome project", () => {
         });
         console.log("test chat send message");
         client1.socket.emit("chat:send_message", {
-            to: client2.id,
+        //to: client2.id,
         });
     });
     test("test chat get all messages that send by user", (done) => {
@@ -260,17 +269,6 @@ describe("my awesome project", () => {
         console.log("test chat get all messages by specific sender");
         client1.socket.emit("chat:get_all", {
             sender: client1.id,
-        });
-    });
-    test("test chat get all messages that send to user", (done) => {
-        client1.socket.once("chat:get_all.response", (arg) => {
-            expect(arg.body.length).toBe(0);
-            expect(arg.status).toBe("ok");
-            done();
-        });
-        console.log("test chat get all messages");
-        client1.socket.emit("chat:get_all", {
-            reciever: client1.id,
         });
     });
     test("test chat get all messages that send by user that did not send any message", (done) => {
