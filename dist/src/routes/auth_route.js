@@ -142,7 +142,7 @@ router.get('/logout', auth_js_1.default.logout);
 router.get('/refresh', auth_js_1.default.refresh);
 /**
  * @swagger
- * /post/{id}:
+ * /auth/{id}:
  *   get:
  *     summary: get user by id
  *     tags: [Auth]
@@ -157,21 +157,21 @@ router.get('/refresh', auth_js_1.default.refresh);
  *           description: the requested user id
  *     responses:
  *       200:
- *         description: the requested post
+ *         description: the requested user
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Post'
+ *               $ref: '#/components/schemas/User'
  *
  */
 router.get('/:id', auth_js_1.default.authenticateMiddleware, auth_js_1.default.getUserById);
 // TODO - need to add test for getUserById in the auth.test.ts
 /**
  * @swagger
- * /post/{id}:
+ * /auth/{id}:
  *   put:
- *     summary: update existing post by id
- *     tags: [Post]
+ *     summary: update user by id
+ *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -180,20 +180,14 @@ router.get('/:id', auth_js_1.default.authenticateMiddleware, auth_js_1.default.g
  *         requiered: true
  *         schema:
  *           type: string
- *           description: the updated post id
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Post'
+ *           description: the updated user id
  *     responses:
  *       200:
- *         description: the requested post
+ *         description: the updated user
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Post'
+ *               $ref: '#/components/schemas/User'
  *
  */
 router.put("/:id", auth_js_1.default.authenticateMiddleware, auth_js_1.default.putUserById);
